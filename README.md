@@ -314,20 +314,20 @@ Todos os testes podem ser executados usando o `pytest` a partir do diretório ra
 - **End-to-End (E2E)**: validam o fluxo completo do sistema, desde a entrada em linguagem natural até a execução da query e retorno do resultado.  
 - **Performance**: medem o tempo de resposta e o desempenho geral das queries e do sistema.
 
-- 
+  
 ## Comandos para executar todos os tipos de testes
 
 
- Executar testes unitários
+# Executar testes unitários
 pytest tests/unit
 
- Executar testes de integração
+ # Executar testes de integração
 pytest tests/integration
 
- Executar testes End-to-End (E2E)
+# Executar testes End-to-End (E2E)
 pytest tests/e2e
 
- Executar testes de performance
+# Executar testes de performance
 pytest tests/test_performance.py
 
 
@@ -1062,6 +1062,7 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
 
 
