@@ -316,7 +316,7 @@ Todos os testes podem ser executados usando o `pytest` a partir do diretório ra
 
 ### Comandos para executar todos os tipos de testes
 
-```bash
+
 # Executar testes unitários
 pytest tests/unit
 
@@ -1061,4 +1061,5 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
