@@ -171,13 +171,30 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 │                 Retorna Resposta Final                      │
 └─────────────────────┬───────────────────────────────────────┘
                       │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                        USUÁRIO                              │
-│            "Existem 5 clientes cadastrados"                 │
-└─────────────────────────────────────────────────────────────┘
-```
-
+                      ├──────────────────────────────┐
+                      │                              │
+                      ▼                              ▼
+┌───────────────────────────────────┐   ┌──────────────────────────────────┐
+│           USUÁRIO                 │   │   MEMÓRIA PERSISTENTE            │
+│   "Existem 5 clientes             │   │   ┌────────────────────────┐     │
+│    cadastrados"                   │   │   │      SQLITE            │     │
+└───────────────────────────────────┘   │   │   (memory.db)          │     │
+                                        │   │                        │     │
+                                        │   │  Salva:                │     │
+                                        │   │  • user_id             │     │
+                                        │   │  • session_id          │     │
+                                        │   │  • question            │     │
+                                        │   │  • sql_query           │     │
+                                        │   │  • result              │     │
+                                        │   │  • timestamp           │     │
+                                        │   │  • metadata            │     │
+                                        │   └────────────────────────┘     │
+                                        │                                  │
+                                        │   Propósito:                     │
+                                        │   ✓ Contexto entre sessões       │
+                                        │   ✓ Histórico completo           │
+                                        │   ✓ Isolamento por usuário       │
+                                        └──────────────────────────────────┘
 ---
 
 <div style="page-break-after: always;"></div>
@@ -1033,5 +1050,6 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
 
