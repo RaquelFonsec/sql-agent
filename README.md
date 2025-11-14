@@ -54,8 +54,6 @@ Se necessário, o sistema pode ser facilmente adaptado para usar um modelo open-
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ## 🔧 Como Funciona
 
 ### O Papel de Cada Tecnologia
@@ -74,7 +72,7 @@ GPT-4 gera: "SELECT COUNT(*) FROM clientes;"
 ```
 Tabelas:
 - clientes (5 registros)
-- produtos (6 registros)  
+- produtos (6 registros)
 - transacoes (10 registros)
 ```
 
@@ -82,7 +80,7 @@ Tabelas:
 **A "Ponte" - Facilita Comunicação com GPT-4**
 
 ```python
-# Com LangChain 
+# Com LangChain
 from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(model="gpt-4")
 response = llm.invoke("Quantos clientes?")
@@ -95,12 +93,13 @@ response = llm.invoke("Quantos clientes?")
 Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 ```
 
+---
 
-## 🏗️ Arquitetura e Fluxo
+## 🏗️ Arquitetura do Sistema
 
-ARQUITETURA MULTI-AGENTE SQL AGENT
-================================================================================
+### Arquitetura Multi-Agente
 
+```
 ┌─────────────────────────────────────────────────────────────┐
 │                        USUÁRIO                              │
 │              "Quantos clientes temos?"                      │
@@ -193,12 +192,13 @@ ARQUITETURA MULTI-AGENTE SQL AGENT
                           │  ✓ Histórico         │
                           │  ✓ Isolamento        │
                           └──────────────────────┘
+```
 
-================================================================================
+---
 
-FLUXO DETALHADO PASSO A PASSO
-================================================================================
+### Fluxo Detalhado Passo a Passo
 
+```
 1. ENTRADA DO USUÁRIO
    └─→ "Quantos clientes temos?"
 
@@ -256,8 +256,9 @@ FLUXO DETALHADO PASSO A PASSO
 
 10. SAÍDA PARA O USUÁRIO
     └─→ "Existem 5 clientes cadastrados."
+```
 
-================================================================================
+---
 
 ### Componentes de Suporte
 
@@ -272,12 +273,10 @@ Registra logs detalhados de todas as operações, incluindo timestamps, user IDs
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ## 🛠️ Tecnologias Utilizadas
 
 ### Linguagem de Programação
-- **Python 3.10+** 
+- **Python 3.10+**
 
 ### Frameworks de IA e NLP
 - **LangChain** - Framework para desenvolvimento de aplicações com LLMs
@@ -314,8 +313,6 @@ Registra logs detalhados de todas as operações, incluindo timestamps, user IDs
 - Acesso administrativo ao PostgreSQL
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 📦 Instalação e Configuração
 
@@ -378,8 +375,6 @@ psql -U sql_agent_user -d sql_agent_db -f database/init.sql
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ### Passo 3: Configurar Variáveis de Ambiente
 
 Crie um arquivo `.env` na raiz do projeto:
@@ -417,8 +412,6 @@ Deve imprimir "OK".
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ## 📁 Estrutura de Diretórios
 
 ```
@@ -451,8 +444,6 @@ sql-agent/
 ```
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 🧩 Componentes Principais
 
@@ -507,8 +498,6 @@ Implementação de Retrieval-Augmented Generation para o schema do banco.
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ### Model Context Protocol (`mcp_context.py`)
 
 Padronização do contexto compartilhado entre todos os agentes.
@@ -555,8 +544,6 @@ python view_memory_database.py
 ```
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 🎮 Como Usar
 
@@ -609,8 +596,6 @@ python view_memory_database.py
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ## ✨ Funcionalidades Implementadas
 
 ### Requisitos Essenciais Atendidos
@@ -651,8 +636,6 @@ Logging completo em arquivo `sql_agent.log` com timestamps, user IDs, queries e 
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ## 🔒 Segurança
 
 ### Proteção Contra SQL Injection
@@ -686,8 +669,6 @@ Arquivo `.env` incluído no `.gitignore` para prevenir commit acidental de crede
 Usuário do banco (`sql_agent_user`) tem apenas permissões necessárias, sem acesso de superusuário.
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 📊 Observabilidade e Logs
 
@@ -746,8 +727,6 @@ grep "Nova consulta" sql_agent.log | wc -l
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ## 🗄️ Banco de Dados
 
 ### PostgreSQL - Dados de Negócio
@@ -767,7 +746,7 @@ Catálogo de produtos disponíveis.
 #### Tabela `transacoes`
 Registro de compras realizadas.
 - **Campos:** `id`, `cliente_id`, `produto_id`, `quantidade`, `valor_total`, `data_transacao`
-- **Relacionamentos:** 
+- **Relacionamentos:**
   - `cliente_id` referencia `clientes`
   - `produto_id` referencia `produtos`
 - **Constraints:** quantidade positiva, valor_total não negativo
@@ -799,8 +778,6 @@ Armazena histórico completo de interações.
 - Conversas agrupadas por `session_id`
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ### Comandos Úteis
 
@@ -842,8 +819,6 @@ SELECT COUNT(*) FROM conversation_history;
 ```
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 🧪 Testes e Validação
 
@@ -889,8 +864,6 @@ Resultado esperado: Agente 3 bloqueia a operação antes da execução
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ### Validação de Queries
 
 Todas as queries geradas são válidas PostgreSQL e executam sem erros.
@@ -913,8 +886,6 @@ Exemplos de queries geradas corretamente:
 - **Segurança:** 0 queries perigosas executadas (todas bloqueadas pelo validator)
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 🔧 Troubleshooting
 
@@ -966,8 +937,6 @@ Verificar chave em [platform.openai.com/api-keys](https://platform.openai.com/ap
 
 ---
 
-<div style="page-break-after: always;"></div>
-
 ### Problema: Tabelas Não Encontradas
 
 **Sintoma:** `relation "clientes" does not exist`
@@ -1007,8 +976,6 @@ Não executar diretamente:
 ```
 
 ---
-
-<div style="page-break-after: always;"></div>
 
 ## 🎓 Conclusão
 
@@ -1061,10 +1028,3 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
-
-
-
-
-
-
-
