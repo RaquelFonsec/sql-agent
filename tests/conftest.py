@@ -39,12 +39,12 @@ def sample_schema():
     """
 
 # ---------------------------
-# Mock Engine PostgreSQL — FIX COMPLETO
+# Mock Engine PostgreSQL — 
 # ---------------------------
 
 @pytest.fixture
 def mock_postgres_engine():
-    # engine precisa ser MagicMock para suportar __enter__/__exit__
+    
     mock_engine = MagicMock()
 
     # conexão simulada
