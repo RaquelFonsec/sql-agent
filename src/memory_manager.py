@@ -146,3 +146,4 @@ if __name__ == "__main__":
     # Estatísticas
     stats = memory.get_statistics("user123")
     print("Estatísticas:", stats)
+

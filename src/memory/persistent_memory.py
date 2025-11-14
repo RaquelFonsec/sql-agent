@@ -110,3 +110,4 @@ class PersistentMemory:
 
 # Instância global
 memory = PersistentMemory()
+
