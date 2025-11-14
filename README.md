@@ -300,6 +300,39 @@ Registra logs detalhados de todas as operações, incluindo timestamps, user IDs
 
 ---
 
+
+
+## 🧪 Testes do SQL Agent Inteligente
+
+O projeto possui diferentes tipos de testes para garantir que todas as funcionalidades estão funcionando corretamente.  
+Todos os testes podem ser executados usando o `pytest` a partir do diretório raiz do projeto.
+
+### Tipos de Testes
+
+- **Unitários**: testam cada componente individual isoladamente, garantindo que a lógica de cada módulo está correta.  
+- **Integração**: verificam se os componentes do sistema funcionam corretamente quando integrados, incluindo comunicação com o banco de dados.  
+- **End-to-End (E2E)**: validam o fluxo completo do sistema, desde a entrada em linguagem natural até a execução da query e retorno do resultado.  
+- **Performance**: medem o tempo de resposta e o desempenho geral das queries e do sistema.
+
+### Comandos para executar todos os tipos de testes
+
+```bash
+# Executar testes unitários
+pytest tests/unit
+
+# Executar testes de integração
+pytest tests/integration
+
+# Executar testes End-to-End (E2E)
+pytest tests/e2e
+
+# Executar testes de performance
+pytest tests/test_performance.py
+
+
+
+
+
 ## 💻 Requisitos do Sistema
 
 ### Software Necessário
@@ -1028,3 +1061,4 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
