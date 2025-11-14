@@ -108,6 +108,4 @@ class PersistentMemory:
             return []
 
 
-# Instância global
 memory = PersistentMemory()
-

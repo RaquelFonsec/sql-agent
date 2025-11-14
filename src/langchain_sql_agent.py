@@ -15,18 +15,25 @@ class LangChainSQLAgent:
     """SQL Agent com LangChain + SQLDatabaseChain"""
     
     def __init__(self):
-        # Conectar ao banco
-        database_url = "postgresql://sql_agent_user:secure_password@localhost/sql_agent_db"
+        
+        database_url = os.getenv('DATABASE_URL')
+        if not database_url:
+            raise ValueError("DATABASE_URL não configurada no arquivo .env")
+        
         self.db = SQLDatabase.from_uri(database_url)
         
-        # Configurar LLM
+        
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY não configurada no arquivo .env")
+        
         self.llm = ChatOpenAI(
             model="gpt-4",
             temperature=0,
-            openai_api_key=os.getenv('OPENAI_API_KEY')
+            openai_api_key=api_key
         )
         
-        # Criar prompt customizado
+        
         self.custom_prompt = PromptTemplate(
             input_variables=["input", "table_info", "top_k"],
             template="""Você é um especialista em SQL PostgreSQL.
@@ -70,10 +77,10 @@ SQL Query:"""
             # Executar chain
             result = self.db_chain(question)
             
-            print(f"\n✅ SQL Gerado:")
+            print(f"\nSQL Gerado:")
             print(f"   {result['intermediate_steps'][0]}\n")
             
-            print(f"✅ Resultado:")
+            print(f"Resultado:")
             print(f"   {result['result']}\n")
             
             return {
@@ -85,7 +92,7 @@ SQL Query:"""
             
         except Exception as e:
             logger.error(f"Erro: {e}")
-            print(f"\n❌ Erro: {e}\n")
+            print(f"\nErro: {e}\n")
             return {
                 'success': False,
                 'question': question,
@@ -95,7 +102,7 @@ SQL Query:"""
 
 def main():
     print("\n" + "="*80)
-    print("  🤖 SQL AGENT COM LANGCHAIN + OPENAI GPT-4")
+    print("  SQL AGENT COM LANGCHAIN + OPENAI GPT-4")
     print("="*80 + "\n")
     
     agent = LangChainSQLAgent()
@@ -117,13 +124,12 @@ def main():
         resultado = agent.query(pergunta)
         
         if i < len(perguntas):
-            input("\n⏎ Pressione ENTER para continuar...\n")
+            input("\nPressione ENTER para continuar...\n")
     
     print("\n" + "="*80)
-    print("  ✅ DEMONSTRAÇÃO LANGCHAIN CONCLUÍDA!")
+    print("  DEMONSTRACAO LANGCHAIN CONCLUIDA")
     print("="*80 + "\n")
 
 
 if __name__ == "__main__":
     main()
-

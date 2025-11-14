@@ -8,7 +8,6 @@ from langgraph.graph import StateGraph, END
 from langchain_openai import ChatOpenAI
 from sqlalchemy import create_engine, text
 
-# Adicionar o diretório raiz ao path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.memory.persistent_memory import PersistentMemory
@@ -42,19 +41,27 @@ class LangGraphSQLAgent:
     """SQL Agent com LangGraph + Memória Persistente"""
     
     def __init__(self):
+        database_url = os.getenv('DATABASE_URL')
+        if not database_url:
+            raise ValueError("DATABASE_URL não configurada no arquivo .env")
+        
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY não configurada no arquivo .env")
+        
         self.llm = ChatOpenAI(
             model="gpt-4",
             temperature=0,
-            openai_api_key=os.getenv('OPENAI_API_KEY')
+            openai_api_key=api_key
         )
         
-        self.engine = create_engine("postgresql://sql_agent_user:secure_password@localhost/sql_agent_db")
+        self.engine = create_engine(database_url)
         self.memory = PersistentMemory()
         self.workflow = self._create_workflow()
-        logger.info("🧠 LangGraph SQL Agent inicializado com memória persistente")
+        logger.info("LangGraph SQL Agent inicializado com memória persistente")
     
     def _retrieve_schema(self, state: AgentState) -> AgentState:
-        print("📋 [1/5] Agente Schema Retriever...")
+        print("[1/5] Agente Schema Retriever...")
         
         state['schema_context'] = """
         Tabelas:
@@ -66,14 +73,13 @@ class LangGraphSQLAgent:
         return state
     
     def _generate_sql(self, state: AgentState) -> AgentState:
-        print("🤖 [2/5] Agente SQL Generator (GPT-4)...")
+        print("[2/5] Agente SQL Generator (GPT-4)...")
         
-        # 🧠 RECUPERAR HISTÓRICO DO USUÁRIO
         historico = self.memory.get_user_history(state['user_id'], limit=3)
         
         context_historico = ""
         if historico:
-            print(f"   💭 Usando contexto de {len(historico)} consultas anteriores")
+            print(f"   Usando contexto de {len(historico)} consultas anteriores")
             context_historico = "\n\nConsultas anteriores deste usuário:\n"
             for h in historico:
                 context_historico += f"- {h['question']}\n"
@@ -99,7 +105,7 @@ Gere uma query SQL PostgreSQL. Use apenas SELECT. Retorne apenas o SQL."""
         return state
     
     def _validate_sql(self, state: AgentState) -> AgentState:
-        print("✅ [3/5] Agente SQL Validator...")
+        print("[3/5] Agente SQL Validator...")
         
         sql = state['sql_query'].upper()
         is_valid = True
@@ -114,19 +120,19 @@ Gere uma query SQL PostgreSQL. Use apenas SELECT. Retorne apenas o SQL."""
         state['validation_result'] = {'is_valid': is_valid, 'errors': errors}
         
         if is_valid:
-            print("   ✓ SQL válido e seguro")
+            print("   SQL válido e seguro")
         else:
-            print(f"   ✗ SQL inválido: {errors}")
+            print(f"   SQL inválido: {errors}")
         
         return state
     
     def _execute_query(self, state: AgentState) -> AgentState:
         if not state['validation_result']['is_valid']:
-            print("⚠️  [4/5] Agente Query Executor (BLOQUEADO)")
+            print("[4/5] Agente Query Executor (BLOQUEADO)")
             state['execution_result'] = "Query inválida - não executada"
             return state
         
-        print("⚡ [4/5] Agente Query Executor...")
+        print("[4/5] Agente Query Executor...")
         
         try:
             with self.engine.connect() as conn:
@@ -137,26 +143,25 @@ Gere uma query SQL PostgreSQL. Use apenas SELECT. Retorne apenas o SQL."""
                 data = [dict(zip(columns, row)) for row in rows]
                 state['execution_result'] = str(data)
                 
-                print(f"   ✓ {len(rows)} registro(s) retornado(s)")
+                print(f"   {len(rows)} registro(s) retornado(s)")
                 
-                # 🧠 SALVAR NA MEMÓRIA
                 self.memory.save_interaction(
                     user_id=state['user_id'],
                     session_id=state['session_id'],
                     question=state['question'],
                     sql_query=state['sql_query'],
-                    result=state['execution_result'][:200]  # Limitar tamanho
+                    result=state['execution_result'][:200]
                 )
-                print("   💾 Salvo na memória persistente")
+                print("   Salvo na memória persistente")
         
         except Exception as e:
             state['execution_result'] = f"Erro: {e}"
-            print(f"   ✗ Erro: {e}")
+            print(f"   Erro: {e}")
         
         return state
     
     def _format_response(self, state: AgentState) -> AgentState:
-        print("📝 [5/5] Agente Response Formatter...")
+        print("[5/5] Agente Response Formatter...")
         
         response = f"""
 PERGUNTA: {state['question']}
@@ -169,7 +174,7 @@ RESULTADO:
 """
         
         state['formatted_response'] = response
-        print("   ✓ Resposta formatada")
+        print("   Resposta formatada")
         
         return state
     
@@ -198,11 +203,11 @@ RESULTADO:
             session_id = str(uuid.uuid4())
         
         print(f"\n{'='*80}")
-        print(f"🎯 INICIANDO WORKFLOW COM MEMÓRIA PERSISTENTE")
+        print(f"INICIANDO WORKFLOW COM MEMORIA PERSISTENTE")
         print(f"{'='*80}\n")
-        print(f"👤 Usuário: {user_id}")
-        print(f"🔑 Sessão: {session_id[:16]}...")
-        print(f"❓ Pergunta: {question}\n")
+        print(f"Usuario: {user_id}")
+        print(f"Sessao: {session_id[:16]}...")
+        print(f"Pergunta: {question}\n")
         
         initial_state = {
             'question': question,
@@ -232,13 +237,12 @@ RESULTADO:
 
 def main():
     print("\n" + "="*80)
-    print("  🤖 SQL AGENT COM MEMÓRIA PERSISTENTE MULTISESSÃO")
-    print("  LangGraph + OpenAI GPT-4 + Memória Automática")
+    print("  SQL AGENT COM MEMORIA PERSISTENTE MULTISESSAO")
+    print("  LangGraph + OpenAI GPT-4 + Memoria Automatica")
     print("="*80 + "\n")
     
     agent = LangGraphSQLAgent()
     
-    # Usuário específico
     user_id = "raquel_fonseca"
     session_id = str(uuid.uuid4())
     
@@ -257,29 +261,27 @@ def main():
         agent.query(pergunta, user_id=user_id, session_id=session_id)
         
         if i < len(perguntas):
-            input("\n⏎ Pressione ENTER para continuar...\n")
+            input("\nPressione ENTER para continuar...\n")
     
-    # Mostrar histórico
     print("\n" + "="*80)
-    print("  📚 HISTÓRICO COMPLETO DO USUÁRIO")
+    print("  HISTORICO COMPLETO DO USUARIO")
     print("="*80 + "\n")
     
     historico = agent.get_user_history(user_id)
     
-    print(f"👤 Usuário: {user_id}")
-    print(f"📝 Total de consultas salvas: {len(historico)}\n")
+    print(f"Usuario: {user_id}")
+    print(f"Total de consultas salvas: {len(historico)}\n")
     
     for i, item in enumerate(historico, 1):
         print(f"{i}. {item['question']}")
-        print(f"   📅 {item['timestamp']}")
+        print(f"   Data: {item['timestamp']}")
         print()
     
     print("="*80)
-    print("  ✅ TODAS AS CONSULTAS FORAM SALVAS NA MEMÓRIA!")
-    print("  🧠 Contexto preservado entre sessões")
+    print("  TODAS AS CONSULTAS FORAM SALVAS NA MEMORIA")
+    print("  Contexto preservado entre sessoes")
     print("="*80 + "\n")
 
 
 if __name__ == "__main__":
     main()
-
