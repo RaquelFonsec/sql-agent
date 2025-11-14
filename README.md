@@ -39,36 +39,211 @@ Desenvolver um agente SQL inteligente capaz de:
 - ✅ Garantir segurança contra injeção SQL
 - ✅ Prover observabilidade completa do sistema
 
-### Competências Demonstradas
 
-- Processamento de Linguagem Natural
-- Arquiteturas Multi-Agente
-- Integração com LLMs (Large Language Models)
-- Bancos de Dados Relacionais
-- Sistemas Distribuídos e Escaláveis
 
-## 🏗️ Arquitetura do Sistema
+# SQL Agent Inteligente
 
-O sistema utiliza uma arquitetura baseada em agentes especializados orquestrados por **LangGraph**. Cada agente possui uma responsabilidade específica no fluxo de processamento.
+Sistema inteligente de conversão de linguagem natural para SQL usando arquitetura multi-agente com LangChain, LangGraph e GPT-4.
 
-### Fluxo de Execução
+---
 
-O processamento de uma pergunta passa por **cinco agentes** em sequência:
+## Índice
 
-#### 1️⃣ Schema Retriever
-Responsável por recuperar e fornecer o contexto do schema do banco de dados. Utiliza técnicas de **RAG (Retrieval-Augmented Generation)** para buscar informações relevantes sobre as tabelas, colunas e relacionamentos.
+1. [Visão Geral](#visão-geral)
+2. [Como Funciona](#como-funciona)
+3. [Arquitetura e Fluxo](#arquitetura-e-fluxo)
+4. [Tecnologias](#tecnologias)
+5. [Instalação](#instalação)
+6. [Uso](#uso)
+7. [Estrutura do Projeto](#estrutura-do-projeto)
+8. [Funcionalidades](#funcionalidades)
+9. [Segurança](#segurança)
+10. [Troubleshooting](#troubleshooting)
 
-#### 2️⃣ SQL Generator
-Converte a pergunta em linguagem natural para uma query SQL válida. Utiliza o modelo **GPT-4** da OpenAI através do LangChain, recebendo como contexto tanto o schema do banco quanto o histórico de perguntas anteriores do usuário.
+---
 
-#### 3️⃣ SQL Validator
-Valida a query gerada para garantir segurança. Bloqueia operações perigosas como `DROP`, `DELETE`, `UPDATE`, `INSERT`, `ALTER` e `TRUNCATE`, permitindo apenas operações `SELECT`.
+## Visão Geral
 
-#### 4️⃣ Query Executor
-Executa a query validada no banco de dados PostgreSQL e captura os resultados. Utiliza **SQLAlchemy** para garantir prepared statements e proteção adicional.
+O SQL Agent permite que usuários façam perguntas em **linguagem natural** (português) e recebam respostas automáticas através da conversão para SQL, execução no PostgreSQL e formatação dos resultados.
 
-#### 5️⃣ Response Formatter
-Formata os resultados da query em uma resposta compreensível para o usuário final.
+### Exemplo Prático
+```
+Você pergunta: "Quantos clientes temos?"
+Sistema retorna: "Existem 5 clientes cadastrados."
+
+Nos bastidores:
+- GPT-4 gerou: SELECT COUNT(*) FROM clientes;
+- PostgreSQL executou e retornou: 5
+- Sistema formatou a resposta
+```
+
+---
+
+## Como Funciona
+
+### O Papel de Cada Tecnologia
+
+#### GPT-4 (OpenAI)
+**O "Cérebro" - Converte Português em SQL**
+```
+Entrada: "Quantos clientes temos?"
+GPT-4 gera: "SELECT COUNT(*) FROM clientes;"
+```
+
+#### PostgreSQL
+**O "Banco de Dados" - Armazena e Consulta os Dados**
+```
+Tabelas:
+- clientes (5 registros)
+- produtos (6 registros)  
+- transacoes (10 registros)
+```
+
+#### LangChain
+**A "Ponte" - Facilita Comunicação com GPT-4**
+```python
+
+# Com LangChain 
+from langchain_openai import ChatOpenAI
+llm = ChatOpenAI(model="gpt-4")
+response = llm.invoke("Quantos clientes?")
+```
+
+#### LangGraph
+**O "Gerente" - Orquestra os 5 Agentes**
+```
+Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
+```
+
+---
+
+## Arquitetura e Fluxo
+
+### Arquitetura Multi-Agente
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        USUÁRIO                              │
+│              "Quantos clientes temos?"                      │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      LANGGRAPH                              │
+│                (Orquestrador Multi-Agente)                  │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+        ┌─────────────────────────────────┐
+        │    AGENTE 1: Schema Retriever   │
+        │    Busca estrutura do banco     │
+        │    Retorna: tabelas e colunas   │
+        └──────────────┬──────────────────┘
+                       │
+                       ▼
+        ┌──────────────────────────────────────┐
+        │    AGENTE 2: SQL Generator           │
+        │    ┌──────────────────────────┐      │
+        │    │      LANGCHAIN           │      │
+        │    │         +                │      │
+        │    │      GPT-4               │      │
+        │    │                          │      │
+        │    │  Recebe: Pergunta +      │      │
+        │    │          Schema          │      │
+        │    │                          │      │
+        │    │  Gera: SQL               │      │
+        │    └──────────────────────────┘      │
+        │                                      │
+        │  Retorna: SELECT COUNT(*) FROM...   │
+        └──────────────┬───────────────────────┘
+                       │
+                       ▼
+        ┌─────────────────────────────────┐
+        │    AGENTE 3: SQL Validator      │
+        │    Verifica segurança           │
+        │    Bloqueia: DROP, DELETE...    │
+        │    Permite: SELECT              │
+        └──────────────┬──────────────────┘
+                       │
+                       ▼
+        ┌──────────────────────────────────────┐
+        │    AGENTE 4: Query Executor          │
+        │    ┌──────────────────────────┐      │
+        │    │     POSTGRESQL           │      │
+        │    │                          │      │
+        │    │  Executa SQL             │      │
+        │    │  Retorna: 5              │      │
+        │    └──────────────────────────┘      │
+        └──────────────┬───────────────────────┘
+                       │
+                       ▼
+        ┌─────────────────────────────────┐
+        │    AGENTE 5: Response Formatter │
+        │    Formata resultado            │
+        │    "5 clientes cadastrados"     │
+        └──────────────┬──────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      LANGGRAPH                              │
+│                 Retorna Resposta Final                      │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        USUÁRIO                              │
+│            "Existem 5 clientes cadastrados"                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Fluxo Detalhado Passo a Passo
+```
+1. ENTRADA DO USUÁRIO
+   └─→ "Quantos clientes temos?"
+   
+2. LANGGRAPH INICIA WORKFLOW
+   └─→ Cria estado compartilhado (MCP Context)
+   
+3. AGENTE 1: Schema Retriever
+   └─→ Busca no PostgreSQL
+   └─→ Retorna: "clientes(id, nome, email, saldo)"
+   
+4. AGENTE 2: SQL Generator
+   ├─→ LangChain monta prompt
+   ├─→ Envia para GPT-4:
+   │   "Schema: clientes(id, nome, email)
+   │    Pergunta: Quantos clientes temos?
+   │    Gere SQL PostgreSQL:"
+   │
+   ├─→ GPT-4 responde:
+   │   "SELECT COUNT(*) FROM clientes;"
+   │
+   └─→ Retorna SQL gerado
+   
+5. AGENTE 3: SQL Validator
+   ├─→ Verifica: SELECT COUNT(*) FROM clientes;
+   ├─→ Não contém: DROP, DELETE, UPDATE
+   └─→ Status: VÁLIDO ✓
+   
+6. AGENTE 4: Query Executor
+   ├─→ Conecta PostgreSQL
+   ├─→ Executa: SELECT COUNT(*) FROM clientes;
+   ├─→ PostgreSQL retorna: [(5,)]
+   └─→ Salva na memória SQLite
+   
+7. AGENTE 5: Response Formatter
+   ├─→ Recebe: [(5,)]
+   └─→ Formata: "Existem 5 clientes cadastrados."
+   
+8. LANGGRAPH FINALIZA
+   └─→ Retorna resposta ao usuário
+   
+9. SAÍDA PARA O USUÁRIO
+   └─→ "Existem 5 clientes cadastrados."
+```
+
+
+
+
 
 ### Componentes de Suporte
 
@@ -749,3 +924,4 @@ Através deste projeto foram demonstradas competências em:
 ---
 
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**
+
