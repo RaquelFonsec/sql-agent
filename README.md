@@ -39,7 +39,10 @@ Desenvolver um agente SQL inteligente capaz de:
 - ✅ Garantir segurança contra injeção SQL
 - ✅ Prover observabilidade completa do sistema
 
-
+Obs :Para este projeto, utilizei a API da OpenAI (GPT-4) pela maior precisão na geração de SQL complexos.
+Isso permitiu focar nos requisitos realmente importantes do desafio:
+multi-agentes, segurança SQL, LangGraph, arquitetura MCP, memória persistente e RAG.
+Se necessário, o sistema pode ser facilmente adaptado para usar um modelo open-source local (Llama/Mistral), pois a camada LLM está isolada e intercambiável.
 
 
 ## Como Funciona
@@ -887,5 +890,6 @@ Através deste projeto foram demonstradas competências em:
 ---
 
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**
+
 
 
