@@ -102,8 +102,6 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 ## 🏗️ Arquitetura e Fluxo
 
 ### Arquitetura Multi-Agente
-
-```
 ┌─────────────────────────────────────────────────────────────┐
 │                        USUÁRIO                              │
 │              "Quantos clientes temos?"                      │
@@ -195,11 +193,10 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
                                         │   ✓ Histórico completo           │
                                         │   ✓ Isolamento por usuário       │
                                         └──────────────────────────────────┘
----
 
+================================================================================
 
 ### Fluxo Detalhado Passo a Passo
-
 
 1. ENTRADA DO USUÁRIO
    └─→ "Quantos clientes temos?"
@@ -232,18 +229,32 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
    ├─→ Conecta PostgreSQL
    ├─→ Executa: SELECT COUNT(*) FROM clientes;
    ├─→ PostgreSQL retorna: [(5,)]
-   └─→ Salva na memória SQLite
+   └─→ Passa resultado para próximo agente
    
 7. AGENTE 5: Response Formatter
    ├─→ Recebe: [(5,)]
    └─→ Formata: "Existem 5 clientes cadastrados."
    
 8. LANGGRAPH FINALIZA
-   └─→ Retorna resposta ao usuário
+   ├─→ Retorna resposta ao usuário
+   └─→ Salva interação completa na memória persistente
    
-9. SAÍDA PARA O USUÁRIO
-   └─→ "Existem 5 clientes cadastrados."
-```
+9. MEMÓRIA PERSISTENTE (SQLite)
+   ├─→ Recebe dados completos da interação:
+   │   • user_id: "raquel_fonseca"
+   │   • session_id: "92f2b20b-5c11-4f..."
+   │   • question: "Quantos clientes temos?"
+   │   • sql_query: "SELECT COUNT(*) FROM clientes;"
+   │   • result: "[{'count': 5}]"
+   │   • timestamp: "2025-11-14 00:34:48"
+   │   • metadata: "{...}"
+   │
+   ├─→ Salva no banco memory.db
+   ├─→ Permite consultas futuras
+   └─→ Mantém contexto entre sessões
+   
+10. SAÍDA PARA O USUÁRIO
+    └─→ "Existem 5 clientes cadastrados."
 
 ---
 
@@ -1049,6 +1060,7 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
 
 
