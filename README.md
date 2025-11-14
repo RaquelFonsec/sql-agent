@@ -315,21 +315,23 @@ Todos os testes podem ser executados usando o `pytest` a partir do diretório ra
 - **Performance**: medem o tempo de resposta e o desempenho geral das queries e do sistema.
 
   
-## Comandos para executar todos os tipos de testes
+Execute os testes usando `pytest` a partir do diretório raiz do projeto.
 
+### Unitários
+Testam cada componente isoladamente  
+`pytest tests/unit`
 
-# Executar testes unitários
-pytest tests/unit
+### Integração
+Verificam se os componentes funcionam juntos e com o banco de dados  
+`pytest tests/integration`
 
- # Executar testes de integração
-pytest tests/integration
+### End-to-End (E2E)
+Validam o fluxo completo do sistema  
+`pytest tests/e2e`
 
-# Executar testes End-to-End (E2E)
-pytest tests/e2e
-
-# Executar testes de performance
-pytest tests/test_performance.py
-
+### Performance
+Medem tempo de resposta e desempenho geral  
+`pytest tests/test_performance.py`
 
 
 
@@ -1062,6 +1064,7 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
 
 
