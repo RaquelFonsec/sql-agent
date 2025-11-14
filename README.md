@@ -197,11 +197,10 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
                                         └──────────────────────────────────┘
 ---
 
-<div style="page-break-after: always;"></div>
 
 ### Fluxo Detalhado Passo a Passo
 
-```
+
 1. ENTRADA DO USUÁRIO
    └─→ "Quantos clientes temos?"
    
@@ -1050,6 +1049,7 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
 
 
