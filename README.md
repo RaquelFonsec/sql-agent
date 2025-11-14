@@ -1,31 +1,38 @@
+
 # SQL Agent Inteligente
 
-Sistema inteligente de conversão de linguagem natural para SQL usando arquitetura multi-agente com LangChain, LangGraph e GPT-4.
+**Sistema inteligente de conversão de linguagem natural para SQL usando arquitetura multi-agente com LangChain, LangGraph e GPT-4**
+
+---
 
 ## 📋 Sumário
 
-- [Visão Geral](#-visão-geral)
-- [Objetivo](#-objetivo)
-- [Arquitetura do Sistema](#-arquitetura-do-sistema)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Requisitos do Sistema](#-requisitos-do-sistema)
-- [Instalação e Configuração](#-instalação-e-configuração)
-- [Estrutura de Diretórios](#-estrutura-de-diretórios)
-- [Componentes Principais](#-componentes-principais)
-- [Como Usar](#-como-usar)
-- [Funcionalidades Implementadas](#-funcionalidades-implementadas)
-- [Segurança](#-segurança)
-- [Observabilidade e Logs](#-observabilidade-e-logs)
-- [Banco de Dados](#-banco-de-dados)
-- [Testes e Validação](#-testes-e-validação)
-- [Troubleshooting](#-troubleshooting)
-- [Conclusão](#-conclusão)
+- [Visão Geral](#visão-geral)
+- [Objetivo](#objetivo)
+- [Arquitetura do Sistema](#arquitetura-do-sistema)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Requisitos do Sistema](#requisitos-do-sistema)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Estrutura de Diretórios](#estrutura-de-diretórios)
+- [Componentes Principais](#componentes-principais)
+- [Como Usar](#como-usar)
+- [Funcionalidades Implementadas](#funcionalidades-implementadas)
+- [Segurança](#segurança)
+- [Observabilidade e Logs](#observabilidade-e-logs)
+- [Banco de Dados](#banco-de-dados)
+- [Testes e Validação](#testes-e-validação)
+- [Troubleshooting](#troubleshooting)
+- [Conclusão](#conclusão)
+
+---
 
 ## 🎯 Visão Geral
 
 O **SQL Agent** é um sistema inteligente que permite aos usuários fazerem perguntas em linguagem natural (português) e obterem respostas automáticas através da conversão dessas perguntas em queries SQL, execução no banco de dados PostgreSQL e formatação dos resultados.
 
 O sistema vai além de uma simples conversão NLP para SQL, implementando uma arquitetura completa de múltiplos agentes especializados, cada um com uma responsabilidade específica no processamento da consulta.
+
+---
 
 ## 🚀 Objetivo
 
@@ -39,18 +46,23 @@ Desenvolver um agente SQL inteligente capaz de:
 - ✅ Garantir segurança contra injeção SQL
 - ✅ Prover observabilidade completa do sistema
 
-Obs :Para este projeto, utilizei a API da OpenAI (GPT-4) pela maior precisão na geração de SQL complexos.
-Isso permitiu focar nos requisitos realmente importantes do desafio:
-multi-agentes, segurança SQL, LangGraph, arquitetura MCP, memória persistente e RAG.
+### Observação sobre o Modelo LLM
+
+Para este projeto, utilizei a API da OpenAI (GPT-4) pela maior precisão na geração de SQL complexos. Isso permitiu focar nos requisitos realmente importantes do desafio: multi-agentes, segurança SQL, LangGraph, arquitetura MCP, memória persistente e RAG.
+
 Se necessário, o sistema pode ser facilmente adaptado para usar um modelo open-source local (Llama/Mistral), pois a camada LLM está isolada e intercambiável.
 
+---
 
-## Como Funciona
+<div style="page-break-after: always;"></div>
+
+## 🔧 Como Funciona
 
 ### O Papel de Cada Tecnologia
 
 #### GPT-4 (OpenAI)
 **O "Cérebro" - Converte Português em SQL**
+
 ```
 Entrada: "Quantos clientes temos?"
 GPT-4 gera: "SELECT COUNT(*) FROM clientes;"
@@ -58,6 +70,7 @@ GPT-4 gera: "SELECT COUNT(*) FROM clientes;"
 
 #### PostgreSQL
 **O "Banco de Dados" - Armazena e Consulta os Dados**
+
 ```
 Tabelas:
 - clientes (5 registros)
@@ -67,8 +80,8 @@ Tabelas:
 
 #### LangChain
 **A "Ponte" - Facilita Comunicação com GPT-4**
-```python
 
+```python
 # Com LangChain 
 from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(model="gpt-4")
@@ -77,15 +90,19 @@ response = llm.invoke("Quantos clientes?")
 
 #### LangGraph
 **O "Gerente" - Orquestra os 5 Agentes**
+
 ```
 Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 ```
 
 ---
 
-## Arquitetura e Fluxo
+<div style="page-break-after: always;"></div>
+
+## 🏗️ Arquitetura e Fluxo
 
 ### Arquitetura Multi-Agente
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        USUÁRIO                              │
@@ -161,7 +178,12 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 └─────────────────────────────────────────────────────────────┘
 ```
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ### Fluxo Detalhado Passo a Passo
+
 ```
 1. ENTRADA DO USUÁRIO
    └─→ "Quantos clientes temos?"
@@ -207,9 +229,7 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
    └─→ "Existem 5 clientes cadastrados."
 ```
 
-
-
-
+---
 
 ### Componentes de Suporte
 
@@ -221,6 +241,10 @@ Padroniza o contexto compartilhado entre todos os agentes, garantindo coerência
 
 **Sistema de Observabilidade**  
 Registra logs detalhados de todas as operações, incluindo timestamps, user IDs, queries geradas e resultados.
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -247,8 +271,9 @@ Registra logs detalhados de todas as operações, incluindo timestamps, user IDs
 - **MCP** (Model Context Protocol)
 - **Multi-Agent Orchestration**
 
-## 💻 Requisitos do Sistema
+---
 
+## 💻 Requisitos do Sistema
 
 ### Software Necessário
 - Sistema Operacional: Linux (Ubuntu 20.04+), macOS (10.15+) ou Windows 10+
@@ -256,631 +281,13 @@ Registra logs detalhados de todas as operações, incluindo timestamps, user IDs
 - PostgreSQL versão 12 ou superior
 - pip (gerenciador de pacotes Python)
 
-
 ### Credenciais Necessárias
 - Chave de API da OpenAI ([platform.openai.com](https://platform.openai.com))
 - Acesso administrativo ao PostgreSQL
 
+---
 
-
-
-
-
-
-###Demonstração Completa dos Requisitos Implementados
-
-1. SISTEMA MULTI-AGENTE COM LANGGRAPH1.1 Inicialização e Execução Completa
-
-(venv) raquel-fonseca@raquel-fonseca-ai:~/sql-agent$ python src/langgraph_workflow.py
-
-================================================================================
-  🤖 SQL AGENT COM MEMÓRIA PERSISTENTE MULTISESSÃO
-  LangGraph + OpenAI GPT-4 + Memória Automática
-================================================================================
-
-2025-11-14 00:34:47,469 - __main__ - INFO - 🧠 LangGraph SQL Agent inicializado com memória persistente
-
-################################################################################
-# CONSULTA 1/4
-################################################################################
-
-================================================================================
-🎯 INICIANDO WORKFLOW COM MEMÓRIA PERSISTENTE
-================================================================================
-
-👤 Usuário: raquel_fonseca
-🔑 Sessão: 92f2b20b-5c11-4f...
-❓ Pergunta: Quantos clientes temos?
-
-📋 [1/5] Agente Schema Retriever...
-🤖 [2/5] Agente SQL Generator (GPT-4)...
-   💭 Usando contexto de 3 consultas anteriores
-2025-11-14 00:34:48,160 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-   SQL: SELECT COUNT(id) FROM clientes;...
-✅ [3/5] Agente SQL Validator...
-   ✓ SQL válido e seguro
-⚡ [4/5] Agente Query Executor...
-   ✓ 1 registro(s) retornado(s)
-2025-11-14 00:34:48,198 - src.memory.persistent_memory - INFO - Interaction saved for user raquel_fonseca
-   💾 Salvo na memória persistente
-📝 [5/5] Agente Response Formatter...
-   ✓ Resposta formatada
-
-================================================================================
-RESPOSTA FINAL:
-================================================================================
-
-PERGUNTA: Quantos clientes temos?
-
-SQL GERADO:
-SELECT COUNT(id) FROM clientes;
-
-RESULTADO:
-[{'count': 5}]
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 2/4
-################################################################################
-
-================================================================================
-🎯 INICIANDO WORKFLOW COM MEMÓRIA PERSISTENTE
-================================================================================
-
-👤 Usuário: raquel_fonseca
-🔑 Sessão: 92f2b20b-5c11-4f...
-❓ Pergunta: Liste os produtos mais caros
-
-📋 [1/5] Agente Schema Retriever...
-🤖 [2/5] Agente SQL Generator (GPT-4)...
-   💭 Usando contexto de 3 consultas anteriores
-2025-11-14 00:34:55,000 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-   SQL: SELECT nome, preco FROM produtos ORDER BY preco DESC;...
-✅ [3/5] Agente SQL Validator...
-   ✓ SQL válido e seguro
-⚡ [4/5] Agente Query Executor...
-   ✓ 6 registro(s) retornado(s)
-2025-11-14 00:34:55,039 - src.memory.persistent_memory - INFO - Interaction saved for user raquel_fonseca
-   💾 Salvo na memória persistente
-📝 [5/5] Agente Response Formatter...
-   ✓ Resposta formatada
-
-================================================================================
-RESPOSTA FINAL:
-================================================================================
-
-PERGUNTA: Liste os produtos mais caros
-
-SQL GERADO:
-SELECT nome, preco FROM produtos ORDER BY preco DESC;
-
-RESULTADO:
-[{'nome': 'Notebook', 'preco': Decimal('3500.00')}, {'nome': 'Smartphone', 'preco': Decimal('2000.00')}, {'nome': 'Tablet', 'preco': Decimal('1500.00')}, {'nome': 'Monitor', 'preco': Decimal('800.00')}, {'nome': 'Teclado', 'preco': Decimal('150.00')}, {'nome': 'Mouse', 'preco': Decimal('50.00')}]
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 3/4
-################################################################################
-
-================================================================================
-🎯 INICIANDO WORKFLOW COM MEMÓRIA PERSISTENTE
-================================================================================
-
-👤 Usuário: raquel_fonseca
-🔑 Sessão: 92f2b20b-5c11-4f...
-❓ Pergunta: Quais clientes compraram notebook?
-
-📋 [1/5] Agente Schema Retriever...
-🤖 [2/5] Agente SQL Generator (GPT-4)...
-   💭 Usando contexto de 3 consultas anteriores
-2025-11-14 00:34:56,766 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-   SQL: SELECT clientes.nome FROM clientes JOIN transacoes ON clientes.id = transacoes.cliente_id JOIN produtos ON transacoes.produto_id = produtos.id WHERE produtos.nome = 'notebook';...
-✅ [3/5] Agente SQL Validator...
-   ✓ SQL válido e seguro
-⚡ [4/5] Agente Query Executor...
-   ✓ 0 registro(s) retornado(s)
-2025-11-14 00:34:56,787 - src.memory.persistent_memory - INFO - Interaction saved for user raquel_fonseca
-   💾 Salvo na memória persistente
-📝 [5/5] Agente Response Formatter...
-   ✓ Resposta formatada
-
-================================================================================
-RESPOSTA FINAL:
-================================================================================
-
-PERGUNTA: Quais clientes compraram notebook?
-
-SQL GERADO:
-SELECT clientes.nome 
-FROM clientes 
-JOIN transacoes ON clientes.id = transacoes.cliente_id 
-JOIN produtos ON transacoes.produto_id = produtos.id 
-WHERE produtos.nome = 'notebook';
-
-RESULTADO:
-[]
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 4/4
-################################################################################
-
-================================================================================
-🎯 INICIANDO WORKFLOW COM MEMÓRIA PERSISTENTE
-================================================================================
-
-👤 Usuário: raquel_fonseca
-🔑 Sessão: 92f2b20b-5c11-4f...
-❓ Pergunta: Qual o total gasto por cliente?
-
-📋 [1/5] Agente Schema Retriever...
-🤖 [2/5] Agente SQL Generator (GPT-4)...
-   💭 Usando contexto de 3 consultas anteriores
-2025-11-14 00:34:58,185 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-   SQL: SELECT clientes.nome, SUM(transacoes.valor_total) AS total_gasto FROM clientes JOIN transacoes ON clientes.id = transacoes.cliente_id GROUP BY clientes.nome;...
-✅ [3/5] Agente SQL Validator...
-   ✓ SQL válido e seguro
-⚡ [4/5] Agente Query Executor...
-   ✓ 5 registro(s) retornado(s)
-2025-11-14 00:34:58,197 - src.memory.persistent_memory - INFO - Interaction saved for user raquel_fonseca
-   💾 Salvo na memória persistente
-📝 [5/5] Agente Response Formatter...
-   ✓ Resposta formatada
-
-================================================================================
-RESPOSTA FINAL:
-================================================================================
-
-PERGUNTA: Qual o total gasto por cliente?
-
-SQL GERADO:
-SELECT clientes.nome, SUM(transacoes.valor_total) AS total_gasto
-FROM clientes
-JOIN transacoes ON clientes.id = transacoes.cliente_id
-GROUP BY clientes.nome;
-
-RESULTADO:
-[{'nome': 'Carlos Souza', 'total_gasto': Decimal('2150.00')}, {'nome': 'Maria Santos', 'total_gasto': Decimal('2000.00')}, {'nome': 'Joao Silva', 'total_gasto': Decimal('3600.00')}, {'nome': 'Ana Costa', 'total_gasto': Decimal('1500.00')}, {'nome': 'Pedro Oliveira', 'total_gasto': Decimal('5100.00')}]
-
-================================================================================
-  📚 HISTÓRICO COMPLETO DO USUÁRIO
-================================================================================
-
-👤 Usuário: raquel_fonseca
-📝 Total de consultas salvas: 10
-
-1. Qual o total gasto por cliente?
-   📅 2025-11-13 23:34:58
-
-2. Quais clientes compraram notebook?
-   📅 2025-11-13 23:34:56
-
-3. Liste os produtos mais caros
-   📅 2025-11-13 23:34:55
-
-4. Quantos clientes temos?
-   📅 2025-11-13 23:34:48
-
-5. Qual o total gasto por cliente?
-   📅 2025-11-13 23:24:05
-
-6. Quais clientes compraram notebook?
-   📅 2025-11-13 23:24:02
-
-7. Liste os produtos mais caros
-   📅 2025-11-13 23:24:00
-
-8. Quantos clientes temos?
-   📅 2025-11-13 23:23:56
-
-9. Qual o total gasto por cliente?
-   📅 2025-11-13 23:18:33
-
-10. Quais clientes compraram notebook?
-   📅 2025-11-13 23:18:30
-
-================================================================================
-  ✅ TODAS AS CONSULTAS FORAM SALVAS NA MEMÓRIA!
-  🧠 Contexto preservado entre sessões
-================================================================================
-
-
-
-
-
-2. SISTEMA LANGCHAIN PURO (SQL DATABASE CHAIN)
-
-(venv) raquel-fonseca@raquel-fonseca-ai:~/sql-agent$ python src/langchain_sql_agent.py
-
-================================================================================
-  🤖 SQL AGENT COM LANGCHAIN + OPENAI GPT-4
-================================================================================
-
-################################################################################
-# CONSULTA 1/6
-################################################################################
-
-================================================================================
-PERGUNTA: Quantos clientes temos cadastrados?
-================================================================================
-
-INFO:__main__:Processando: Quantos clientes temos cadastrados?
-
-> Entering new SQLDatabaseChain chain...
-Quantos clientes temos cadastrados?
-SQLQuery:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT COUNT(*) AS total_clientes FROM clientes;
-SQLResult: [(5,)]
-Answer:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT COUNT(*) AS total_clientes FROM clientes;
-> Finished chain.
-
-✅ SQL Gerado:
-SELECT COUNT(*) AS total_clientes FROM clientes;
-
-✅ Resultado:
-SELECT COUNT(*) AS total_clientes FROM clientes;
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 2/6
-################################################################################
-
-================================================================================
-PERGUNTA: Quais clientes compraram um notebook?
-================================================================================
-
-INFO:__main__:Processando: Quais clientes compraram um notebook?
-
-> Entering new SQLDatabaseChain chain...
-Quais clientes compraram um notebook?
-SQLQuery:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT c.nome 
-FROM clientes c 
-JOIN transacoes t ON c.id = t.cliente_id 
-JOIN produtos p ON t.produto_id = p.id 
-WHERE p.nome ILIKE 'Notebook'
-LIMIT 10;
-SQLResult: [('Joao Silva',), ('Pedro Oliveira',)]
-Answer:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT c.nome 
-FROM clientes c 
-JOIN transacoes t ON c.id = t.cliente_id 
-JOIN produtos p ON t.produto_id = p.id 
-WHERE p.nome ILIKE 'Notebook'
-LIMIT 10;
-
-SQL Result: 
-Joao Silva
-Pedro Oliveira
-> Finished chain.
-
-✅ SQL Gerado:
-SELECT c.nome 
-FROM clientes c 
-JOIN transacoes t ON c.id = t.cliente_id 
-JOIN produtos p ON t.produto_id = p.id 
-WHERE p.nome ILIKE 'Notebook'
-LIMIT 10;
-
-SQL Result: 
-Joao Silva
-Pedro Oliveira
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 3/6
-################################################################################
-
-================================================================================
-PERGUNTA: Qual é o produto mais caro?
-================================================================================
-
-INFO:__main__:Processando: Qual é o produto mais caro?
-
-> Entering new SQLDatabaseChain chain...
-Qual é o produto mais caro?
-SQLQuery:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT nome, preco 
-FROM produtos 
-ORDER BY preco DESC 
-LIMIT 1;
-SQLResult: [('Notebook', Decimal('3500.00'))]
-Answer:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT nome, preco 
-FROM produtos 
-ORDER BY preco DESC 
-LIMIT 1;
-> Finished chain.
-
-✅ SQL Gerado:
-SELECT nome, preco 
-FROM produtos 
-ORDER BY preco DESC 
-LIMIT 1;
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 4/6
-################################################################################
-
-================================================================================
-PERGUNTA: Mostre o total de vendas por categoria de produto
-================================================================================
-
-INFO:__main__:Processando: Mostre o total de vendas por categoria de produto
-
-> Entering new SQLDatabaseChain chain...
-Mostre o total de vendas por categoria de produto
-SQLQuery:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT 
-    p.categoria, 
-    SUM(t.valor_total) AS total_vendas
-FROM 
-    transacoes t
-JOIN 
-    produtos p ON t.produto_id = p.id
-GROUP BY 
-    p.categoria
-LIMIT 10;
-SQLResult: [('Eletronicos', Decimal('12500.00')), ('Perifericos', Decimal('1850.00'))]
-Answer:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT 
-    p.categoria, 
-    SUM(t.valor_total) AS total_vendas
-FROM 
-    transacoes t
-JOIN 
-    produtos p ON t.produto_id = p.id
-GROUP BY 
-    p.categoria
-LIMIT 10;
-> Finished chain.
-
-✅ SQL Gerado:
-SELECT 
-    p.categoria, 
-    SUM(t.valor_total) AS total_vendas
-FROM 
-    transacoes t
-JOIN 
-    produtos p ON t.produto_id = p.id
-GROUP BY 
-    p.categoria
-LIMIT 10;
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 5/6
-################################################################################
-
-================================================================================
-PERGUNTA: Quais clientes gastaram mais de 3000 reais?
-================================================================================
-
-INFO:__main__:Processando: Quais clientes gastaram mais de 3000 reais?
-
-> Entering new SQLDatabaseChain chain...
-Quais clientes gastaram mais de 3000 reais?
-SQLQuery:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT c.nome, SUM(t.valor_total) as total_gasto
-FROM clientes c
-JOIN transacoes t ON c.id = t.cliente_id
-GROUP BY c.nome
-HAVING SUM(t.valor_total) > 3000
-LIMIT 10;
-SQLResult: [('Joao Silva', Decimal('3600.00')), ('Pedro Oliveira', Decimal('5100.00'))]
-Answer:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT c.nome, SUM(t.valor_total) as total_gasto
-FROM clientes c
-JOIN transacoes t ON c.id = t.cliente_id
-GROUP BY c.nome
-HAVING SUM(t.valor_total) > 3000
-LIMIT 10;
-> Finished chain.
-
-✅ SQL Gerado:
-SELECT c.nome, SUM(t.valor_total) as total_gasto
-FROM clientes c
-JOIN transacoes t ON c.id = t.cliente_id
-GROUP BY c.nome
-HAVING SUM(t.valor_total) > 3000
-LIMIT 10;
-
-⏎ Pressione ENTER para continuar...
-
-################################################################################
-# CONSULTA 6/6
-################################################################################
-
-================================================================================
-PERGUNTA: Qual cliente tem o maior saldo?
-================================================================================
-
-INFO:__main__:Processando: Qual cliente tem o maior saldo?
-
-> Entering new SQLDatabaseChain chain...
-Qual cliente tem o maior saldo?
-SQLQuery:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT nome, saldo 
-FROM clientes 
-ORDER BY saldo DESC 
-LIMIT 1;
-SQLResult: [('Pedro Oliveira', Decimal('7500.00'))]
-Answer:INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-SELECT nome, saldo 
-FROM clientes 
-ORDER BY saldo DESC 
-LIMIT 1;
-> Finished chain.
-
-✅ SQL Gerado:
-SELECT nome, saldo 
-FROM clientes 
-ORDER BY saldo DESC 
-LIMIT 1;
-
-================================================================================
-  ✅ DEMONSTRAÇÃO LANGCHAIN CONCLUÍDA!
-================================================================================
-
-
-
-
-3. VISUALIZAÇÃO DA MEMÓRIA PERSISTENTE (SQLite)
-
-
-(venv) raquel-fonseca@raquel-fonseca-ai:~/sql-agent$ python view_memory_database.py
-
-================================================================================
-  💾 BANCO DE DADOS DE MEMÓRIA PERSISTENTE
-================================================================================
-
-📊 ESTATÍSTICAS GERAIS
---------------------------------------------------------------------------------
-Total de interações: 20
-Total de usuários: 3
-Total de sessões: 7
-
-👥 USUÁRIOS CADASTRADOS
---------------------------------------------------------------------------------
-
-👤 raquel_fonseca
-   Consultas: 16
-   Última atividade: 2025-11-13 23:34:58
-
-👤 usuario_1
-   Consultas: 3
-   Última atividade: 2025-11-13 23:13:01
-
-👤 usuario_2
-   Consultas: 1
-   Última atividade: 2025-11-13 23:13:01
-
-📝 ÚLTIMAS 10 INTERAÇÕES
---------------------------------------------------------------------------------
-
-1. [2025-11-13 23:34:58]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 92f2b20b-5c11-4f...
-   ❓ Pergunta: Qual o total gasto por cliente?
-   💻 SQL: SELECT clientes.nome, SUM(transacoes.valor_total) AS total_g...
-
-2. [2025-11-13 23:34:56]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 92f2b20b-5c11-4f...
-   ❓ Pergunta: Quais clientes compraram notebook?
-   💻 SQL: SELECT clientes.nome FROM clientes JOIN transacoes ON clie...
-
-3. [2025-11-13 23:34:55]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 92f2b20b-5c11-4f...
-   ❓ Pergunta: Liste os produtos mais caros
-   💻 SQL: SELECT nome, preco FROM produtos ORDER BY preco DESC;...
-
-4. [2025-11-13 23:34:48]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 92f2b20b-5c11-4f...
-   ❓ Pergunta: Quantos clientes temos?
-   💻 SQL: SELECT COUNT(id) FROM clientes;...
-
-5. [2025-11-13 23:24:05]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 0bb5c587-8e12-40...
-   ❓ Pergunta: Qual o total gasto por cliente?
-   💻 SQL: SELECT clientes.nome, SUM(transacoes.valor_total) AS total_g...
-
-6. [2025-11-13 23:24:02]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 0bb5c587-8e12-40...
-   ❓ Pergunta: Quais clientes compraram notebook?
-   💻 SQL: SELECT clientes.nome FROM clientes JOIN transacoes ON clie...
-
-7. [2025-11-13 23:24:00]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 0bb5c587-8e12-40...
-   ❓ Pergunta: Liste os produtos mais caros
-   💻 SQL: SELECT nome, preco FROM produtos ORDER BY preco DESC;...
-
-8. [2025-11-13 23:23:56]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: 0bb5c587-8e12-40...
-   ❓ Pergunta: Quantos clientes temos?
-   💻 SQL: SELECT COUNT(id) FROM clientes;...
-
-9. [2025-11-13 23:18:33]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: e261b205-4165-42...
-   ❓ Pergunta: Qual o total gasto por cliente?
-   💻 SQL: SELECT clientes.nome, SUM(transacoes.valor_total) AS total_g...
-
-10. [2025-11-13 23:18:30]
-   👤 Usuário: raquel_fonseca
-   🔑 Sessão: e261b205-4165-42...
-   ❓ Pergunta: Quais clientes compraram notebook?
-   💻 SQL: SELECT clientes.nome FROM clientes JOIN transacoes ON clie...
-
-🔍 ANÁLISE POR SESSÃO
---------------------------------------------------------------------------------
-
-🔑 Sessão: 92f2b20b-5c11-4fd6-951c-...
-   👤 Usuário: raquel_fonseca
-   📊 Interações: 4
-   📅 Período: 2025-11-13 23:34:48 → 2025-11-13 23:34:58
-
-🔑 Sessão: 0bb5c587-8e12-40dd-b3e1-...
-   👤 Usuário: raquel_fonseca
-   📊 Interações: 4
-   📅 Período: 2025-11-13 23:23:56 → 2025-11-13 23:24:05
-
-🔑 Sessão: e261b205-4165-4264-bf4f-...
-   👤 Usuário: raquel_fonseca
-   📊 Interações: 4
-   📅 Período: 2025-11-13 23:18:23 → 2025-11-13 23:18:33
-
-🔑 Sessão: 6838bdb0-96d4-48b4-9862-...
-   👤 Usuário: raquel_fonseca
-   📊 Interações: 4
-   📅 Período: 2025-11-13 23:16:14 → 2025-11-13 23:16:26
-
-🔑 Sessão: sessao_C...
-   👤 Usuário: usuario_2
-   📊 Interações: 1
-   📅 Período: 2025-11-13 23:13:01 → 2025-11-13 23:13:01
-
-🔑 Sessão: sessao_B...
-   👤 Usuário: usuario_1
-   📊 Interações: 1
-   📅 Período: 2025-11-13 23:13:01 → 2025-11-13 23:13:01
-
-🔑 Sessão: sessao_A...
-   👤 Usuário: usuario_1
-   📊 Interações: 2
-   📅 Período: 2025-11-13 23:13:00 → 2025-11-13 23:13:01
-
-🔥 PERGUNTAS MAIS COMUNS
---------------------------------------------------------------------------------
-1. Quantos clientes temos? (5x)
-2. Qual o total gasto por cliente? (4x)
-3. Quais clientes compraram notebook? (4x)
-4. Liste os produtos mais caros (4x)
-5. Quem gastou mais? (1x)
-
-================================================================================
-  ✅ ANÁLISE COMPLETA DA MEMÓRIA
-================================================================================
-
-
-
-
-
+<div style="page-break-after: always;"></div>
 
 ## 📦 Instalação e Configuração
 
@@ -903,6 +310,8 @@ Instale as dependências:
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+---
 
 ### Passo 2: Configurar PostgreSQL
 
@@ -939,9 +348,14 @@ Inicialize o schema do banco:
 psql -U sql_agent_user -d sql_agent_db -f database/init.sql
 ```
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ### Passo 3: Configurar Variáveis de Ambiente
 
 Crie um arquivo `.env` na raiz do projeto:
+
 ```env
 OPENAI_API_KEY=sua_chave_openai_aqui
 DATABASE_URL=postgresql://sql_agent_user:secure_password@localhost/sql_agent_db
@@ -955,7 +369,9 @@ MODEL_NAME=gpt-4
 TEMPERATURE=0.0
 ```
 
-> ⚠️ Substitua `sua_chave_openai_aqui` pela sua chave real da OpenAI.
+> ⚠️ **Importante:** Substitua `sua_chave_openai_aqui` pela sua chave real da OpenAI.
+
+---
 
 ### Passo 4: Verificar Instalação
 
@@ -970,6 +386,10 @@ Teste as importações Python:
 python -c "from langchain_openai import ChatOpenAI; from langgraph.graph import StateGraph; print('OK')"
 ```
 Deve imprimir "OK".
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 📁 Estrutura de Diretórios
 
@@ -1002,9 +422,14 @@ sql-agent/
         └── tracer.py                 # Sistema de logging
 ```
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ## 🧩 Componentes Principais
 
 ### Sistema Multi-Agente (`langgraph_workflow.py`)
+
 Componente principal que implementa a orquestração completa dos cinco agentes especializados usando LangGraph.
 
 **Responsabilidades:**
@@ -1019,7 +444,10 @@ Componente principal que implementa a orquestração completa dos cinco agentes 
 python src/langgraph_workflow.py
 ```
 
+---
+
 ### LangChain SQL Agent (`langchain_sql_agent.py`)
+
 Implementação alternativa mais direta usando apenas LangChain, sem a complexidade do multi-agente.
 
 **Uso:**
@@ -1027,7 +455,10 @@ Implementação alternativa mais direta usando apenas LangChain, sem a complexid
 python src/langchain_sql_agent.py
 ```
 
+---
+
 ### Memória Persistente (`persistent_memory.py`)
+
 Sistema de armazenamento de histórico de conversas usando SQLite.
 
 **Métodos principais:**
@@ -1035,7 +466,10 @@ Sistema de armazenamento de histórico de conversas usando SQLite.
 - `get_user_history`: retorna histórico de um usuário
 - `get_session_context`: retorna contexto de uma sessão específica
 
+---
+
 ### RAG Schema Retriever (`schema_retriever.py`)
+
 Implementação de Retrieval-Augmented Generation para o schema do banco.
 
 **Benefícios:**
@@ -1043,7 +477,12 @@ Implementação de Retrieval-Augmented Generation para o schema do banco.
 - Reduz alucinações do modelo
 - Melhora qualidade das queries geradas
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ### Model Context Protocol (`mcp_context.py`)
+
 Padronização do contexto compartilhado entre todos os agentes.
 
 **Estrutura:**
@@ -1059,7 +498,10 @@ Padronização do contexto compartilhado entre todos os agentes.
 - `errors`: lista de erros ocorridos
 - `metadata`: metadados adicionais
 
+---
+
 ### Sistema de Observabilidade (`tracer.py`)
+
 Registra todas as operações do sistema em logs detalhados.
 
 **Informações registradas:**
@@ -1073,7 +515,10 @@ Registra todas as operações do sistema em logs detalhados.
 
 **Arquivo de saída:** `sql_agent.log`
 
+---
+
 ### Visualizador de Memória (`view_memory_database.py`)
+
 Script utilitário para inspecionar o banco de memória.
 
 **Uso:**
@@ -1081,11 +526,16 @@ Script utilitário para inspecionar o banco de memória.
 python view_memory_database.py
 ```
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ## 🎮 Como Usar
 
 ### Executar o Sistema Principal
 
 Para usar o sistema multi-agente completo:
+
 ```bash
 cd sql-agent
 source venv/bin/activate
@@ -1093,6 +543,7 @@ python src/langgraph_workflow.py
 ```
 
 O sistema processará automaticamente quatro perguntas de exemplo:
+
 1. Quantos clientes temos?
 2. Liste os produtos mais caros
 3. Quais clientes compraram notebook?
@@ -1106,22 +557,31 @@ Para cada pergunta você verá:
 
 Pressione ENTER após cada consulta para continuar.
 
+---
+
 ### Executar LangChain Puro
 
 Para demonstrar apenas o LangChain sem multi-agente:
+
 ```bash
 python src/langchain_sql_agent.py
 ```
 
 Processará seis perguntas demonstrando diferentes tipos de queries SQL.
 
+---
+
 ### Visualizar Histórico de Memória
 
 Para inspecionar todas as interações salvas:
+
 ```bash
 python view_memory_database.py
 ```
 
+---
+
+<div style="page-break-after: always;"></div>
 
 ## ✨ Funcionalidades Implementadas
 
@@ -1142,6 +602,8 @@ Queries executadas via SQLAlchemy no PostgreSQL com resultados formatados em dic
 ✅ **Segurança SQL**  
 Validador implementado bloqueando operações perigosas. Apenas `SELECT` é permitido. Prepared statements via SQLAlchemy.
 
+---
+
 ### Diferenciais Implementados
 
 🌟 **RAG (Retrieval-Augmented Generation)**  
@@ -1158,6 +620,10 @@ Cinco agentes especializados (Schema Retriever, SQL Generator, Validator, Execut
 
 🌟 **Observabilidade**  
 Logging completo em arquivo `sql_agent.log` com timestamps, user IDs, queries e resultados.
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 🔒 Segurança
 
@@ -1178,6 +644,8 @@ Sistema permite apenas operações `SELECT`, bloqueando qualquer tentativa de mo
 **4. Sanitização de Entrada**  
 LangChain e GPT-4 fazem parsing semântico da pergunta, convertendo para SQL estruturado, não simples concatenação de strings.
 
+---
+
 ### Gerenciamento de Credenciais
 
 **Variáveis de Ambiente**  
@@ -1188,6 +656,10 @@ Arquivo `.env` incluído no `.gitignore` para prevenir commit acidental de crede
 
 **Princípio do Menor Privilégio**  
 Usuário do banco (`sql_agent_user`) tem apenas permissões necessárias, sem acesso de superusuário.
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 📊 Observabilidade e Logs
 
@@ -1205,6 +677,8 @@ timestamp - module - level - message
 - `ERROR`: Erros que impedem operação mas não derrubam sistema
 - `DEBUG`: Informações detalhadas para troubleshooting
 
+---
+
 ### Informações Registradas
 
 Para cada consulta processada:
@@ -1217,6 +691,8 @@ Para cada consulta processada:
 - ⚡ Tempo de execução
 - 🤖 Chamadas à API OpenAI (status HTTP)
 - 💾 Salvamento na memória persistente
+
+---
 
 ### Visualização de Logs
 
@@ -1239,6 +715,10 @@ Contar consultas:
 ```bash
 grep "Nova consulta" sql_agent.log | wc -l
 ```
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 🗄️ Banco de Dados
 
@@ -1270,6 +750,8 @@ Registro de compras realizadas.
 - Cada transação está associada a um produto (N:1)
 - Foreign keys com `DELETE CASCADE`
 
+---
+
 ### SQLite - Memória Persistente
 
 #### Tabela `conversation_history`
@@ -1287,6 +769,10 @@ Armazena histórico completo de interações.
 
 #### Agrupamento por Sessão
 - Conversas agrupadas por `session_id`
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ### Comandos Úteis
 
@@ -1327,6 +813,10 @@ Contar interações salvas:
 SELECT COUNT(*) FROM conversation_history;
 ```
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ## 🧪 Testes e Validação
 
 ### Verificar Instalação
@@ -1342,6 +832,8 @@ python -c "from langchain_openai import ChatOpenAI; print('LangChain OK')"
 python -c "from langgraph.graph import StateGraph; print('LangGraph OK')"
 python -c "from src.memory.persistent_memory import PersistentMemory; print('Memory OK')"
 ```
+
+---
 
 ### Testes Funcionais
 
@@ -1367,6 +859,10 @@ Resultado esperado: Estatísticas de uso, lista de usuários, histórico de cons
 Modificar uma pergunta para tentar operação perigosa (ex: "DELETE FROM clientes")  
 Resultado esperado: Agente 3 bloqueia a operação antes da execução
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ### Validação de Queries
 
 Todas as queries geradas são válidas PostgreSQL e executam sem erros.
@@ -1379,12 +875,18 @@ Exemplos de queries geradas corretamente:
 - ✅ `ORDER BY` com `LIMIT`
 - ✅ `ILIKE` para busca case-insensitive
 
+---
+
 ### Métricas de Sucesso
 
 - **Taxa de sucesso:** 100% em perguntas dentro do domínio
 - **Tempo médio de resposta:** 2-3 segundos por consulta
 - **Queries corretas:** 100% das queries geradas são sintaticamente válidas
 - **Segurança:** 0 queries perigosas executadas (todas bloqueadas pelo validator)
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 🔧 Troubleshooting
 
@@ -1404,6 +906,8 @@ sudo systemctl start postgresql
 psql -U postgres -c "CREATE DATABASE sql_agent_db;"
 ```
 
+---
+
 ### Problema: ImportError Python
 
 **Sintoma:** `ModuleNotFoundError: No module named 'langchain'`
@@ -1418,6 +922,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+---
+
 ### Problema: Erro OpenAI API
 
 **Sintoma:** `AuthenticationError 401`
@@ -1430,6 +936,10 @@ pip install -r requirements.txt
 **Solução:**  
 Verificar chave em [platform.openai.com/api-keys](https://platform.openai.com/api-keys) e atualizar arquivo `.env`
 
+---
+
+<div style="page-break-after: always;"></div>
+
 ### Problema: Tabelas Não Encontradas
 
 **Sintoma:** `relation "clientes" does not exist`
@@ -1438,6 +948,8 @@ Verificar chave em [platform.openai.com/api-keys](https://platform.openai.com/ap
 ```bash
 psql -U sql_agent_user -d sql_agent_db -f database/init.sql
 ```
+
+---
 
 ### Problema: Memória SQLite Corrompida
 
@@ -1448,6 +960,8 @@ psql -U sql_agent_user -d sql_agent_db -f database/init.sql
 rm memory.db
 ```
 Sistema cria novo banco automaticamente na próxima execução
+
+---
 
 ### Problema: Permissão Negada
 
@@ -1463,6 +977,10 @@ Não executar diretamente:
 ```bash
 ./src/langgraph_workflow.py  # ❌ Não fazer isso
 ```
+
+---
+
+<div style="page-break-after: always;"></div>
 
 ## 🎓 Conclusão
 
@@ -1485,6 +1003,8 @@ Sistema mantém contexto entre sessões, melhorando experiência do usuário.
 **Observabilidade Total**  
 Logging detalhado de todas as operações facilita debugging e monitoramento.
 
+---
+
 ### Casos de Uso
 
 Este sistema pode ser adaptado para:
@@ -1494,7 +1014,7 @@ Este sistema pode ser adaptado para:
 - 🤖 Chatbots com acesso a banco de dados
 - 📈 Ferramentas de Business Intelligence
 
-
+---
 
 ### Tecnologias Dominadas
 
@@ -1510,9 +1030,8 @@ Através deste projeto foram demonstradas competências em:
 
 ---
 
-**Documentação desenvolvida para o projeto SQL Agent Inteligente**
-Projeto desenvolvido por Raquel Fonseca
+**Documentação desenvolvida para o projeto SQL Agent Inteligente**  
+Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
-
 
 
