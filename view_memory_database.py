@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+
 """Visualizador completo do banco de dados de memória"""
 
 import sqlite3
 from datetime import datetime
 
 print("\n" + "="*80)
-print("  💾 BANCO DE DADOS DE MEMÓRIA PERSISTENTE")
+print("   BANCO DE DADOS DE MEMÓRIA PERSISTENTE")
 print("="*80 + "\n")
 
 try:
@@ -29,7 +29,7 @@ try:
     print(f"Total de sessões: {total_sessions}")
     
     # Listar usuários
-    print("\n\n👥 USUÁRIOS CADASTRADOS")
+    print("\n\n USUÁRIOS CADASTRADOS")
     print("-"*80)
     cursor.execute("""
         SELECT user_id, COUNT(*) as consultas, MAX(timestamp) as ultima_consulta
@@ -40,7 +40,7 @@ try:
     
     for row in cursor.fetchall():
         user_id, consultas, ultima = row
-        print(f"\n👤 {user_id}")
+        print(f"\n {user_id}")
         print(f"   Consultas: {consultas}")
         print(f"   Última atividade: {ultima}")
     
@@ -57,11 +57,11 @@ try:
     for i, row in enumerate(cursor.fetchall(), 1):
         user_id, session_id, question, sql_query, timestamp = row
         print(f"\n{i}. [{timestamp}]")
-        print(f"   👤 Usuário: {user_id}")
-        print(f"   🔑 Sessão: {session_id[:16]}...")
-        print(f"   ❓ Pergunta: {question}")
+        print(f"    Usuário: {user_id}")
+        print(f"    Sessão: {session_id[:16]}...")
+        print(f"    Pergunta: {question}")
         if sql_query:
-            print(f"   💻 SQL: {sql_query[:60]}...")
+            print(f"    SQL: {sql_query[:60]}...")
     
     # Análise por sessão
     print("\n\n🔍 ANÁLISE POR SESSÃO")
@@ -77,13 +77,13 @@ try:
     
     for row in cursor.fetchall():
         session_id, user_id, interacoes, inicio, fim = row
-        print(f"\n🔑 Sessão: {session_id[:24]}...")
-        print(f"   👤 Usuário: {user_id}")
-        print(f"   📊 Interações: {interacoes}")
-        print(f"   📅 Período: {inicio} → {fim}")
+        print(f"\n Sessão: {session_id[:24]}...")
+        print(f"    Usuário: {user_id}")
+        print(f"    Interações: {interacoes}")
+        print(f"    Período: {inicio} → {fim}")
     
     # Perguntas mais comuns
-    print("\n\n🔥 PERGUNTAS MAIS COMUNS")
+    print("\n\n PERGUNTAS MAIS COMUNS")
     print("-"*80)
     cursor.execute("""
         SELECT question, COUNT(*) as vezes
@@ -100,11 +100,11 @@ try:
     conn.close()
     
     print("\n" + "="*80)
-    print("  ✅ ANÁLISE COMPLETA DA MEMÓRIA")
+    print("   ANÁLISE COMPLETA DA MEMÓRIA")
     print("="*80 + "\n")
 
 except sqlite3.OperationalError:
-    print("⚠️  Banco de dados 'memory.db' não encontrado.")
+    print("  Banco de dados 'memory.db' não encontrado.")
     print("\nExecute primeiro:")
     print("  python src/langgraph_workflow.py")
     print("\nPara gerar dados na memória.\n")
