@@ -1,0 +1,33 @@
+# Core Dependencies
+langchain==0.1.0
+langchain-openai==0.0.5
+langchain-community==0.0.20
+langgraph==0.0.20
+
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.25
+
+# Configuration
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Observability
+opentelemetry-api==1.22.0
+opentelemetry-sdk==1.22.0
+opentelemetry-instrumentation==0.43b0
+
+# Vector Store
+faiss-cpu==1.7.4
+chromadb==0.4.22
+tiktoken==0.5.2
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# Utilities
+requests==2.31.0
+httpx==0.25.2
