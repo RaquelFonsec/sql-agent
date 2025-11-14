@@ -98,7 +98,9 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 
 ## 🏗️ Arquitetura e Fluxo
 
-### Arquitetura Multi-Agente
+ARQUITETURA MULTI-AGENTE SQL AGENT
+================================================================================
+
 ┌─────────────────────────────────────────────────────────────┐
 │                        USUÁRIO                              │
 │              "Quantos clientes temos?"                      │
@@ -166,45 +168,47 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
 │                 Retorna Resposta Final                      │
 └─────────────────────┬───────────────────────────────────────┘
                       │
-                      ├──────────────────────────────┐
-                      │                              │
-                      ▼                              ▼
-┌───────────────────────────────────┐   ┌──────────────────────────────────┐
-│           USUÁRIO                 │   │   MEMÓRIA PERSISTENTE            │
-│   "Existem 5 clientes             │   │   ┌────────────────────────┐     │
-│    cadastrados"                   │   │   │      SQLITE            │     │
-└───────────────────────────────────┘   │   │   (memory.db)          │     │
-                                        │   │                        │     │
-                                        │   │  Salva:                │     │
-                                        │   │  • user_id             │     │
-                                        │   │  • session_id          │     │
-                                        │   │  • question            │     │
-                                        │   │  • sql_query           │     │
-                                        │   │  • result              │     │
-                                        │   │  • timestamp           │     │
-                                        │   │  • metadata            │     │
-                                        │   └────────────────────────┘     │
-                                        │                                  │
-                                        │   Propósito:                     │
-                                        │   ✓ Contexto entre sessões       │
-                                        │   ✓ Histórico completo           │
-                                        │   ✓ Isolamento por usuário       │
-                                        └──────────────────────────────────┘
+        ┌─────────────┴─────────────┐
+        │                           │
+        ▼                           ▼
+┌─────────────────┐       ┌──────────────────────┐
+│    USUÁRIO      │       │ MEMÓRIA PERSISTENTE  │
+│                 │       │                      │
+│  "Existem 5     │       │  ┌────────────────┐  │
+│   clientes      │       │  │    SQLITE      │  │
+│   cadastrados"  │       │  │  (memory.db)   │  │
+│                 │       │  │                │  │
+└─────────────────┘       │  │  Salva:        │  │
+                          │  │  • user_id     │  │
+                          │  │  • session_id  │  │
+                          │  │  • question    │  │
+                          │  │  • sql_query   │  │
+                          │  │  • result      │  │
+                          │  │  • timestamp   │  │
+                          │  │  • metadata    │  │
+                          │  └────────────────┘  │
+                          │                      │
+                          │  Propósito:          │
+                          │  ✓ Contexto sessões  │
+                          │  ✓ Histórico         │
+                          │  ✓ Isolamento        │
+                          └──────────────────────┘
 
 ================================================================================
 
-### Fluxo Detalhado Passo a Passo
+FLUXO DETALHADO PASSO A PASSO
+================================================================================
 
 1. ENTRADA DO USUÁRIO
    └─→ "Quantos clientes temos?"
-   
+
 2. LANGGRAPH INICIA WORKFLOW
    └─→ Cria estado compartilhado (MCP Context)
-   
+
 3. AGENTE 1: Schema Retriever
    └─→ Busca no PostgreSQL
    └─→ Retorna: "clientes(id, nome, email, saldo)"
-   
+
 4. AGENTE 2: SQL Generator
    ├─→ LangChain monta prompt
    ├─→ Envia para GPT-4:
@@ -216,26 +220,26 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
    │   "SELECT COUNT(*) FROM clientes;"
    │
    └─→ Retorna SQL gerado
-   
+
 5. AGENTE 3: SQL Validator
    ├─→ Verifica: SELECT COUNT(*) FROM clientes;
    ├─→ Não contém: DROP, DELETE, UPDATE
    └─→ Status: VÁLIDO ✓
-   
+
 6. AGENTE 4: Query Executor
    ├─→ Conecta PostgreSQL
    ├─→ Executa: SELECT COUNT(*) FROM clientes;
    ├─→ PostgreSQL retorna: [(5,)]
    └─→ Passa resultado para próximo agente
-   
+
 7. AGENTE 5: Response Formatter
    ├─→ Recebe: [(5,)]
    └─→ Formata: "Existem 5 clientes cadastrados."
-   
+
 8. LANGGRAPH FINALIZA
    ├─→ Retorna resposta ao usuário
    └─→ Salva interação completa na memória persistente
-   
+
 9. MEMÓRIA PERSISTENTE (SQLite)
    ├─→ Recebe dados completos da interação:
    │   • user_id: "raquel_fonseca"
@@ -249,11 +253,11 @@ Agente 1 → Agente 2 → Agente 3 → Agente 4 → Agente 5
    ├─→ Salva no banco memory.db
    ├─→ Permite consultas futuras
    └─→ Mantém contexto entre sessões
-   
+
 10. SAÍDA PARA O USUÁRIO
     └─→ "Existem 5 clientes cadastrados."
 
----
+================================================================================
 
 ### Componentes de Suporte
 
@@ -1057,6 +1061,7 @@ Através deste projeto foram demonstradas competências em:
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**  
 Projeto desenvolvido por Raquel Fonseca  
 GitHub: https://github.com/RaquelFonsec/sql-agent
+
 
 
 
