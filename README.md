@@ -41,43 +41,6 @@ Desenvolver um agente SQL inteligente capaz de:
 
 
 
-# SQL Agent Inteligente
-
-Sistema inteligente de conversão de linguagem natural para SQL usando arquitetura multi-agente com LangChain, LangGraph e GPT-4.
-
----
-
-## Índice
-
-1. [Visão Geral](#visão-geral)
-2. [Como Funciona](#como-funciona)
-3. [Arquitetura e Fluxo](#arquitetura-e-fluxo)
-4. [Tecnologias](#tecnologias)
-5. [Instalação](#instalação)
-6. [Uso](#uso)
-7. [Estrutura do Projeto](#estrutura-do-projeto)
-8. [Funcionalidades](#funcionalidades)
-9. [Segurança](#segurança)
-10. [Troubleshooting](#troubleshooting)
-
----
-
-## Visão Geral
-
-O SQL Agent permite que usuários façam perguntas em **linguagem natural** (português) e recebam respostas automáticas através da conversão para SQL, execução no PostgreSQL e formatação dos resultados.
-
-### Exemplo Prático
-```
-Você pergunta: "Quantos clientes temos?"
-Sistema retorna: "Existem 5 clientes cadastrados."
-
-Nos bastidores:
-- GPT-4 gerou: SELECT COUNT(*) FROM clientes;
-- PostgreSQL executou e retornou: 5
-- Sistema formatou a resposta
-```
-
----
 
 ## Como Funciona
 
@@ -924,4 +887,5 @@ Através deste projeto foram demonstradas competências em:
 ---
 
 **Documentação desenvolvida para o projeto SQL Agent Inteligente**
+
 
