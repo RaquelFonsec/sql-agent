@@ -47,17 +47,17 @@ def mock_postgres_engine():
     
     mock_engine = MagicMock()
 
-    # conexão simulada
+    
     mock_connection = MagicMock()
 
-    # cursor simulado
+    
     mock_cursor = MagicMock()
     mock_cursor.fetchall.return_value = [(1,)]
 
-    # execute() retorna cursor
+    
     mock_connection.execute.return_value = mock_cursor
 
-    # connect() retorna objeto com context manager funcionando
+    
     mock_engine.connect.return_value.__enter__.return_value = mock_connection
     mock_engine.connect.return_value.__exit__.return_value = None
 

@@ -15,7 +15,10 @@ class MCPContext:
     schema_context: Optional[str] = None
     conversation_history: list = field(default_factory=list)
     
+    # Atributos para NLP Parser
+    parsed_entities: Optional[Dict[str, Any]] = None
     parsed_intent: Optional[Dict[str, Any]] = None
+    
     generated_sql: Optional[str] = None
     validation_result: Optional[Dict[str, Any]] = None
     execution_result: Optional[Any] = None
@@ -37,6 +40,7 @@ class MCPContext:
             'session_id': self.session_id,
             'original_question': self.original_question,
             'timestamp': self.timestamp.isoformat(),
+            'parsed_entities': self.parsed_entities,
             'parsed_intent': self.parsed_intent,
             'generated_sql': self.generated_sql,
             'validation_result': self.validation_result,
