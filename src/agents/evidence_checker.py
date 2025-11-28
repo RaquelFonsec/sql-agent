@@ -1,5 +1,5 @@
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate  # ✅ CORRETO
+from langchain_core.prompts import ChatPromptTemplate 
 from src.config.settings import settings
 from src.orchestration.mcp_context import MCPContext
 from src.observability.tracer import tracer
@@ -85,7 +85,7 @@ Audite:""")
                     "issues_count": len(audit_result.get('issues', []))
                 })
                 
-                logger.info(f"Evidence check: {'✅ OK' if audit_result.get('is_correct') else '❌ CORRIGIDO'}")
+                logger.info(f"Evidence check: {'OK' if audit_result.get('is_correct') else '❌ CORRIGIDO'}")
                 
             except Exception as e:
                 logger.error(f"Evidence check failed: {e}")
