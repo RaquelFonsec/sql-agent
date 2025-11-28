@@ -1,5 +1,5 @@
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate  # ✅ CORRETO
+from langchain_core.prompts import ChatPromptTemplate  
 from src.config.settings import settings
 from src.orchestration.mcp_context import MCPContext
 from src.observability.tracer import tracer
