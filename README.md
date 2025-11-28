@@ -13,6 +13,7 @@
 
 - [Visão Geral](#visão-geral)
 - [Arquitetura do Sistema](#arquitetura-do-sistema)
+- [Como LangChain e LangGraph Trabalham Juntos](#como-langchain-e-langgraph-trabalham-juntos)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Instalação](#instalação)
 - [Como Usar](#como-usar)
@@ -137,17 +138,177 @@ RESULTADO em 7.8s (41% mais rápido)
 
 ---
 
+## 🔗 Como LangChain e LangGraph Trabalham Juntos
+
+### O Papel de Cada Framework
+```
+┌─────────────────────────────────────────────────────────┐
+│                      LANGGRAPH                          │
+│              (Orquestrador de Alto Nível)               │
+│                                                         │
+│  • Define o workflow (StateGraph)                       │
+│  • Gerencia o estado compartilhado (MCP Context)        │
+│  • Controla fluxo condicional (conditional edges)       │
+│  • Executa agentes em sequência                         │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           │ usa
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│                      LANGCHAIN                          │
+│              (Biblioteca de Componentes)                │
+│                                                         │
+│  • ChatOpenAI - Interface com GPT-4/GPT-3.5             │
+│  • PromptTemplate - Templates de prompts                │
+│  • FAISS - Vector store para RAG                        │
+│  • Embeddings - Geração de embeddings                   │
+│  • Chains - Encadeamento de operações LLM              │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Exemplo Prático: Agente SQL Generator
+
+**LangGraph define QUANDO e COMO executar:**
+```python
+# src/langgraph_workflow.py
+
+from langgraph.graph import StateGraph
+
+def generate_sql_node(state: AgentState) -> AgentState:
+    """NODE do LangGraph - Define quando executar"""
+    with tracer.start_span("generate_sql"):
+        # Chama o agente LangChain
+        state["context"] = sql_generator.generate(state["context"])
+    return state
+
+# LangGraph orquestra
+workflow = StateGraph(AgentState)
+workflow.add_node("generate_sql", generate_sql_node)
+workflow.add_edge("parse_nlp", "generate_sql")
+```
+
+**LangChain implementa O QUE fazer:**
+```python
+# src/agents/sql_generator.py
+
+from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+
+class SQLGenerator:
+    def __init__(self):
+        # LangChain fornece interface com GPT-4
+        self.llm = ChatOpenAI(
+            model="gpt-4",
+            temperature=0.0
+        )
+        
+        # LangChain fornece templates de prompts
+        self.prompt = PromptTemplate(
+            template="""
+            Dado o schema:
+            {schema}
+            
+            Gere SQL para:
+            {question}
+            """,
+            input_variables=["schema", "question"]
+        )
+    
+    def generate(self, context):
+        # LangChain monta o prompt
+        prompt_text = self.prompt.format(
+            schema=context.schema_context,
+            question=context.original_question
+        )
+        
+        # LangChain executa chamada ao LLM
+        response = self.llm.invoke(prompt_text)
+        
+        context.generated_sql = response.content
+        return context
+```
+
+### Divisão de Responsabilidades
+
+| Componente | Responsabilidade | Exemplo |
+|------------|------------------|---------|
+| **LangGraph** | Workflow e orquestração | `StateGraph`, `add_node()`, `add_edge()` |
+| **LangChain** | Componentes LLM | `ChatOpenAI`, `PromptTemplate`, `FAISS` |
+
+### Todos os 9 Agentes Usam LangChain
+```python
+# 1. CHECK CACHE
+from langchain.embeddings import OpenAIEmbeddings
+embeddings = OpenAIEmbeddings()
+
+# 2. QUERY ROUTER
+from langchain_openai import ChatOpenAI
+router_llm = ChatOpenAI(model="gpt-3.5-turbo")
+
+# 3. SCHEMA RETRIEVER
+from langchain.vectorstores import FAISS
+vector_store = FAISS.load_local("faiss_index")
+
+# 4. NLP PARSER
+from langchain_openai import ChatOpenAI
+parser_llm = ChatOpenAI(model="gpt-4")
+
+# 5. SQL GENERATOR
+from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+generator_llm = ChatOpenAI(model="gpt-4")
+
+# 8. RESPONSE FORMATTER
+from langchain_openai import ChatOpenAI
+formatter_llm = ChatOpenAI(model="gpt-4")
+
+# 9. EVIDENCE CHECKER
+from langchain_openai import ChatOpenAI
+checker_llm = ChatOpenAI(model="gpt-4")
+```
+
+### Por Que Usar Ambos?
+
+**LangChain sozinho:**
+```python
+# ❌ Difícil de gerenciar fluxo complexo
+llm = ChatOpenAI()
+result1 = llm.invoke("pergunta 1")
+result2 = llm.invoke("pergunta 2")  
+result3 = llm.invoke("pergunta 3")
+# Como controlar fluxo condicional?
+# Como compartilhar estado entre etapas?
+```
+
+**LangGraph + LangChain:**
+```python
+# ✅ Fluxo claro e gerenciável
+workflow = StateGraph(AgentState)
+workflow.add_node("step1", node1)  # usa LangChain internamente
+workflow.add_node("step2", node2)  # usa LangChain internamente
+workflow.add_conditional_edges("step1", decide_next_step)
+app = workflow.compile()
+result = app.invoke(initial_state)
+```
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
-- **Python 3.10+**
-- **LangChain** - Framework LLM
-- **LangGraph** - Orquestração multi-agente
+### Frameworks de IA
+- **LangChain** - Componentes LLM (ChatOpenAI, PromptTemplate, FAISS, Embeddings)
+- **LangGraph** - Orquestração multi-agente (StateGraph, Conditional Edges)
 - **OpenAI GPT-4** - SQL generation, formatting, evidence checking
 - **OpenAI GPT-3.5-turbo** - Query routing (otimização)
+
+### Banco de Dados
 - **PostgreSQL 12+** - Banco de dados principal
 - **SQLite** - Cache semântico
 - **FAISS** - Vector store para RAG
-- **OpenTelemetry** - Observabilidade
+
+### Observabilidade
+- **OpenTelemetry** - Traces distribuídos
+- **Python logging** - Logs estruturados
 
 ---
 
@@ -276,13 +437,6 @@ Evidencias: Validadas - sem alucinacoes
 
 Pressione ENTER para proxima consulta...
 
-
-################################################################################
-# CONSULTA 2/4
-################################################################################
-
-Pergunta: Liste os produtos mais caros
-
 ...
 
 ================================================================================
@@ -372,22 +526,25 @@ sql-agent/
 │   └── init.sql                      # Schema PostgreSQL
 │
 ├── src/
-│   ├── langgraph_workflow.py         # Sistema principal (9 agentes)
+│   ├── langgraph_workflow.py         # ⭐ LangGraph orchestration
+│   │                                 #    • StateGraph
+│   │                                 #    • 9 nodes
+│   │                                 #    • Conditional edges
 │   │
-│   ├── agents/
-│   │   ├── query_router.py          # Agente 2: Classificação
-│   │   ├── nlp_parser.py            # Agente 4: Parsing NLP
-│   │   ├── sql_generator.py         # Agente 5: Geração SQL
-│   │   ├── sql_validator.py         # Agente 6: Validação + Cost
-│   │   ├── query_executor.py        # Agente 7: Execução
-│   │   ├── response_formatter.py    # Agente 8: Formatação
-│   │   └── evidence_checker.py      # Agente 9: Auditoria
+│   ├── agents/                       # ⭐ Cada agente usa LangChain
+│   │   ├── query_router.py          # ChatOpenAI(gpt-3.5-turbo)
+│   │   ├── nlp_parser.py            # ChatOpenAI(gpt-4)
+│   │   ├── sql_generator.py         # ChatOpenAI(gpt-4) + PromptTemplate
+│   │   ├── sql_validator.py         # Validação local
+│   │   ├── query_executor.py        # SQLAlchemy
+│   │   ├── response_formatter.py    # ChatOpenAI(gpt-4)
+│   │   └── evidence_checker.py      # ChatOpenAI(gpt-4)
 │   │
 │   ├── rag/
-│   │   └── schema_retriever.py      # Agente 3: RAG Multi-Layer
+│   │   └── schema_retriever.py      # FAISS + OpenAIEmbeddings
 │   │
 │   ├── memory/
-│   │   └── persistent_memory.py     # Agente 1: Cache + História
+│   │   └── persistent_memory.py     # SQLite + OpenAIEmbeddings
 │   │
 │   ├── orchestration/
 │   │   └── mcp_context.py           # Model Context Protocol
@@ -417,22 +574,22 @@ sql-agent/
 **Sem Cache (13.2s):**
 ```
 CHECK CACHE         0.1s  (miss)
-QUERY ROUTER        1.0s  (GPT-3.5)
-SCHEMA RETRIEVER    0.5s  (FAISS)
-NLP PARSER          3.0s  (GPT-4)
-SQL GENERATOR       2.0s  (GPT-4)
+QUERY ROUTER        1.0s  (GPT-3.5 via LangChain)
+SCHEMA RETRIEVER    0.5s  (FAISS via LangChain)
+NLP PARSER          3.0s  (GPT-4 via LangChain)
+SQL GENERATOR       2.0s  (GPT-4 via LangChain)
 SQL VALIDATOR       0.1s  
 QUERY EXECUTOR      0.5s  (PostgreSQL)
-RESPONSE FORMATTER  4.0s  (GPT-4)
-EVIDENCE CHECKER    2.0s  (GPT-4)
+RESPONSE FORMATTER  4.0s  (GPT-4 via LangChain)
+EVIDENCE CHECKER    2.0s  (GPT-4 via LangChain)
 ```
 
 **Com Cache (7.8s):**
 ```
-CHECK CACHE         0.1s  (hit)
+CHECK CACHE         0.1s  (hit - Embeddings via LangChain)
 [PULA 6 AGENTES]    
-RESPONSE FORMATTER  3.9s  (GPT-4)
-EVIDENCE CHECKER    3.8s  (GPT-4)
+RESPONSE FORMATTER  3.9s  (GPT-4 via LangChain)
+EVIDENCE CHECKER    3.8s  (GPT-4 via LangChain)
 ```
 
 ---
@@ -529,7 +686,8 @@ As 4 queries de teste demonstram diferentes capacidades:
 
 Sistema production-ready com:
 
-- ✅ 9 agentes especializados orquestrados
+- ✅ **LangGraph** orquestrando 9 agentes especializados
+- ✅ **LangChain** fornecendo todos os componentes LLM
 - ✅ Cache semântico (300-500% hit rate)
 - ✅ RAG multi-layer para escalabilidade
 - ✅ Segurança enterprise (4 camadas)
