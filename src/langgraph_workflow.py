@@ -3,11 +3,11 @@ from typing import TypedDict, Annotated
 import operator
 from src.orchestration.mcp_context import MCPContext
 
-# Novos agentes
+
 from src.agents.query_router import query_router
 from src.agents.evidence_checker import evidence_checker
 
-# Agentes originais (evoluídos)
+
 from src.agents.nlp_parser import nlp_parser
 from src.agents.sql_generator import sql_generator
 from src.agents.sql_validator import sql_validator
