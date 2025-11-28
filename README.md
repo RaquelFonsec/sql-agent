@@ -148,7 +148,6 @@ RESULTADO em 7.8s (41% mais rápido)
 - **SQLite** - Cache semântico
 - **FAISS** - Vector store para RAG
 - **OpenTelemetry** - Observabilidade
-- **Streamlit** - Interface web
 
 ---
 
@@ -222,61 +221,88 @@ python -c "from langchain_openai import ChatOpenAI; print('OK')"
 
 ## 🎮 Como Usar
 
-### Opção 1: Interface Web (Recomendado)
-```bash
-streamlit run app.py
-```
-
-Abre automaticamente em `http://localhost:8501`
-
-### Opção 2: Terminal - Workflow Completo
+### Executar o Sistema
 ```bash
 python -m src.langgraph_workflow
 ```
 
-Executa 4 queries de teste:
-1. Quantos clientes temos?
-2. Liste os produtos mais caros
-3. Quais clientes compraram notebook?
-4. Qual o total gasto por cliente?
+### O que acontece
 
-### Opção 3: Pergunta Única
-```bash
-python ask.py "Quem gastou mais de R$ 4000?"
+O sistema executa automaticamente 4 queries de teste demonstrando todas as funcionalidades:
+
+1. **Quantos clientes temos?**
+2. **Liste os produtos mais caros**
+3. **Quais clientes compraram notebook?**
+4. **Qual o total gasto por cliente?**
+
+### Saída Esperada
 ```
+================================================================================
+  SQL AGENT - ARQUITETURA EVOLUIDA
+  Multi-Agente com Router + Evidence Checker
+================================================================================
 
-### Opção 4: Modo Interativo
-```bash
-python interactive.py
-```
+Usuario: raquel_fonseca
+Sessao: 9b81e0a0...
+Total de perguntas: 4
 
-Comandos disponíveis:
-- Digite perguntas normalmente
-- `ajuda` - Mostra exemplos
-- `limpar` - Limpa tela
-- `sair` - Encerra
+################################################################################
+# CONSULTA 1/4
+################################################################################
 
-### Opção 5: Teste em Lote
+Pergunta: Quantos clientes temos?
 
-Edite `test_custom.py` com suas perguntas:
-```python
-CUSTOM_QUESTIONS = [
-    "Quem gastou mais de R$ 4000?",
-    "Qual o produto mais barato?",
-    "Quantos produtos de cada categoria?",
-]
-```
+Executando workflow...
 
-Execute:
-```bash
-python test_custom.py
+{
+    "name": "check_cache",
+    "start_time": "2025-11-28T15:22:47.756826Z",
+    "end_time": "2025-11-28T15:22:47.763355Z"
+}
+...
+
+================================================================================
+RESULTADO FINAL:
+================================================================================
+
+Atualmente, temos um total de 5 clientes cadastrados em nosso sistema.
+
+--------------------------------------------------------------------------------
+METADADOS:
+--------------------------------------------------------------------------------
+CACHE: Resultado retornado do cache (instantaneo)
+SQL gerado: SELECT COUNT(*) AS total_clientes FROM clientes...
+Evidencias: Validadas - sem alucinacoes
+
+Pressione ENTER para proxima consulta...
+
+
+################################################################################
+# CONSULTA 2/4
+################################################################################
+
+Pergunta: Liste os produtos mais caros
+
+...
+
+================================================================================
+  WORKFLOW CONCLUIDO COM SUCESSO
+================================================================================
+
+ESTATISTICAS DO CACHE:
+   Queries cacheadas: 4
+   Cache hits: 20
+   Taxa de acerto: 500%
+
+Sistema pronto para escalar para milhoes de dados!
+================================================================================
 ```
 
 ---
 
 ## ✨ Funcionalidades
 
-### Cache Semântico
+### 1. Cache Semântico
 
 Busca queries similares usando embeddings:
 ```python
@@ -291,7 +317,7 @@ Busca queries similares usando embeddings:
 - Custo: 80% mais barato
 - API calls: 60% menos
 
-### Query Router
+### 2. Query Router
 
 Classifica queries e otimiza estratégia:
 
@@ -301,23 +327,23 @@ Classifica queries e otimiza estratégia:
 | "Produtos entre R$100 e R$1000" | SEARCH | filtered_rag |
 | "Clientes que compraram notebook" | ANALYTICS | full_pipeline |
 
-### RAG Multi-Layer
+### 3. RAG Multi-Layer
 
 3 camadas progressivas:
 - **Layer 1:** Metadata (rápido)
 - **Layer 2:** FAISS vector search (médio)
 - **Layer 3:** Statistics + examples (completo)
 
-### SQL Validator + Cost Estimator
+### 4. SQL Validator + Cost Estimator
 
 Valida e estima antes de executar:
-```python
+```
 Valida: Sintaxe, segurança, índices
 Estima: Custo (low/medium/high), linhas retornadas
 Bloqueia: DROP, DELETE, UPDATE, INSERT, etc.
 ```
 
-### Smart Query Executor
+### 5. Smart Query Executor
 
 Execução inteligente:
 - Streaming para grandes resultados
@@ -325,7 +351,7 @@ Execução inteligente:
 - Timeout de 30s
 - Batch processing
 
-### Evidence Checker
+### 6. Evidence Checker
 
 Audita respostas contra dados reais:
 - Detecta alucinações
@@ -340,10 +366,7 @@ sql-agent/
 ├── .env                              # Variáveis de ambiente
 ├── requirements.txt                  # Dependências
 ├── README.md                         # Esta documentação
-├── app.py                            # Interface Streamlit
-├── ask.py                            # Pergunta única
-├── interactive.py                    # Modo interativo
-├── test_custom.py                    # Teste em lote
+├── .gitignore                        # Arquivos ignorados
 │
 ├── database/
 │   └── init.sql                      # Schema PostgreSQL
@@ -352,19 +375,19 @@ sql-agent/
 │   ├── langgraph_workflow.py         # Sistema principal (9 agentes)
 │   │
 │   ├── agents/
-│   │   ├── query_router.py          # Agente 2
-│   │   ├── nlp_parser.py            # Agente 4
-│   │   ├── sql_generator.py         # Agente 5
-│   │   ├── sql_validator.py         # Agente 6
-│   │   ├── query_executor.py        # Agente 7
-│   │   ├── response_formatter.py    # Agente 8
-│   │   └── evidence_checker.py      # Agente 9
+│   │   ├── query_router.py          # Agente 2: Classificação
+│   │   ├── nlp_parser.py            # Agente 4: Parsing NLP
+│   │   ├── sql_generator.py         # Agente 5: Geração SQL
+│   │   ├── sql_validator.py         # Agente 6: Validação + Cost
+│   │   ├── query_executor.py        # Agente 7: Execução
+│   │   ├── response_formatter.py    # Agente 8: Formatação
+│   │   └── evidence_checker.py      # Agente 9: Auditoria
 │   │
 │   ├── rag/
-│   │   └── schema_retriever.py      # Agente 3 (RAG Multi-Layer)
+│   │   └── schema_retriever.py      # Agente 3: RAG Multi-Layer
 │   │
 │   ├── memory/
-│   │   └── persistent_memory.py     # Agente 1 (Cache + História)
+│   │   └── persistent_memory.py     # Agente 1: Cache + História
 │   │
 │   ├── orchestration/
 │   │   └── mcp_context.py           # Model Context Protocol
@@ -412,59 +435,6 @@ RESPONSE FORMATTER  3.9s  (GPT-4)
 EVIDENCE CHECKER    3.8s  (GPT-4)
 ```
 
-### Exemplo Real de Execução
-```bash
-python -m src.langgraph_workflow
-```
-
-**Saída:**
-```
-================================================================================
-  SQL AGENT - ARQUITETURA EVOLUIDA
-================================================================================
-
-Usuario: raquel_fonseca
-Sessao: 9b81e0a0...
-Total de perguntas: 4
-
-################################################################################
-# CONSULTA 1/4
-################################################################################
-
-Pergunta: Quantos clientes temos?
-
-Executando workflow...
-
-================================================================================
-RESULTADO FINAL:
-================================================================================
-
-Atualmente, temos um total de 5 clientes cadastrados em nosso sistema.
-
---------------------------------------------------------------------------------
-METADADOS:
---------------------------------------------------------------------------------
-CACHE: Resultado retornado do cache (instantaneo)
-SQL gerado: SELECT COUNT(*) AS total_clientes FROM clientes...
-Evidencias: Validadas - sem alucinacoes
-
-Pressione ENTER para proxima consulta...
-
-...
-
-================================================================================
-  WORKFLOW CONCLUIDO COM SUCESSO
-================================================================================
-
-ESTATISTICAS DO CACHE:
-   Queries cacheadas: 4
-   Cache hits: 20
-   Taxa de acerto: 500%
-
-Sistema pronto para escalar para milhoes de dados!
-================================================================================
-```
-
 ---
 
 ## 🔧 Troubleshooting
@@ -507,12 +477,6 @@ echo "OPENAI_API_KEY=sk-proj-..." > .env
 # Verificar créditos em: https://platform.openai.com/account/billing
 ```
 
-### Erro: Streamlit não encontrado
-```bash
-pip install streamlit
-streamlit run app.py
-```
-
 ### Cache corrompido
 ```bash
 # Remover banco de cache
@@ -526,25 +490,38 @@ python -m src.langgraph_workflow
 
 ## 📝 Exemplos de Perguntas
 
-### Básicas
-- Quantos clientes temos?
-- Liste todos os produtos
-- Mostre os emails dos clientes
+As 4 queries de teste demonstram diferentes capacidades:
 
-### Intermediárias
-- Quem gastou mais de R$ 4000?
-- Qual o produto mais barato?
-- Produtos entre R$ 100 e R$ 1000
+### Query 1: Agregação Simples
+```
+"Quantos clientes temos?"
+→ SELECT COUNT(*) FROM clientes
+```
 
-### Avançadas
-- Qual o total gasto por cliente?
-- Clientes que compraram notebook?
-- Ranking de clientes por valor gasto
+### Query 2: Ordenação
+```
+"Liste os produtos mais caros"
+→ SELECT nome, preco FROM produtos ORDER BY preco DESC LIMIT 100
+```
 
-### Agregações
-- Qual a média de gasto por cliente?
-- Quantos produtos de cada categoria?
-- Soma total de todas as transações
+### Query 3: JOIN Múltiplas Tabelas
+```
+"Quais clientes compraram notebook?"
+→ SELECT DISTINCT c.nome FROM clientes c 
+  JOIN transacoes t ON c.id = t.cliente_id
+  JOIN produtos p ON t.produto_id = p.id
+  WHERE p.nome ILIKE '%notebook%'
+```
+
+### Query 4: Agregação Complexa
+```
+"Qual o total gasto por cliente?"
+→ SELECT c.nome, SUM(t.valor_total) as total_gasto 
+  FROM clientes c
+  JOIN transacoes t ON c.id = t.cliente_id
+  GROUP BY c.id, c.nome
+  ORDER BY total_gasto DESC
+```
 
 ---
 
@@ -557,16 +534,8 @@ Sistema production-ready com:
 - ✅ RAG multi-layer para escalabilidade
 - ✅ Segurança enterprise (4 camadas)
 - ✅ Observabilidade completa (OpenTelemetry)
-- ✅ 4 interfaces de uso (Web, Terminal, Interativo, Batch)
 - ✅ 100% de acurácia (0% alucinações)
 - ✅ 80% economia de custos (com cache)
 
 **Desenvolvido por Raquel Fonseca**  
 GitHub: https://github.com/RaquelFonsec/sql-agent
-
-
-
-
-
-
-
